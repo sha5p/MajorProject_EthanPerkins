@@ -1,0 +1,168 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_GUID: 5c207a3bf359daf42a3cdcd0f82fc0f5
+  m_SerializeEntries:
+  - m_GUID: 03d2c177635b21c46b9d1f2e4237d076
+    m_Address: Assets/Design_Options/Body/2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0c9af460f3ed3be4aa5559dd6681547a
+    m_Address: Assets/Design_Options/Weapons/blaster-o.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 14fdf74839970294c984c34fd6987037
+    m_Address: Assets/Design_Options/Weapons/blaster-r.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 171c5878e020eb942bbc75e2d3ff4c52
+    m_Address: Assets/Design_Options/Weapons/blaster-f.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2682264129563ca429cad9a82b7fc772
+    m_Address: Assets/Design_Options/Wheels/wheel-medium.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2778c4368eb9efc489846e8c7e3aa784
+    m_Address: Assets/Design_Options/Body/5.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3385612a88da992489bf8dc79595865d
+    m_Address: Assets/Design_Options/Weapons/blaster-d.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 557f599fe73a5e34b9919754fbe16cf9
+    m_Address: Assets/Design_Options/Weapons/blaster-i.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5a7ec49e75d55f64393ce07857f147ba
+    m_Address: Assets/Design_Options/Weapons/blaster-c.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5abaf318692c8394d8b17e4ceab97e55
+    m_Address: Assets/Design_Options/Body/8.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 71ae428146bc3cb47962777a3a032868
+    m_Address: Assets/Design_Options/Weapons/blaster-m.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 758acdf045616c94a80d3bbba436ba16
+    m_Address: Assets/Design_Options/Weapons/blaster-h.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 822d5c15e2b0f4344b163696e28da1f7
+    m_Address: Assets/Design_Options/Body/1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 888f3057e3d3b264b817ed44d02eccea
+    m_Address: Assets/Design_Options/Weapons/blaster-j.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9d0d65c299539f34a9870e88f4aba208
+    m_Address: Assets/Design_Options/Weapons/blaster-b.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ad1ad445e429fcd4c93140ea481162e2
+    m_Address: Assets/Design_Options/Weapons/blaster-p.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae782a40f6086264499b2bd2b8ef4452
+    m_Address: Assets/Design_Options/Weapons/blaster-n.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b5c3e98b8014be149a2f6b0e48af2d90
+    m_Address: Assets/Design_Options/Weapons/blaster-e.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c26077c4a1d78a74cb504cd9c733e1cc
+    m_Address: Assets/Design_Options/Body/3.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d5bf5f16f10d71e4ab7b4f485c8dad60
+    m_Address: Assets/Design_Options/Wheels/wheel-small.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db20a3f8f2427c94aa3cc2e55ea51f27
+    m_Address: Assets/Design_Options/Weapons/blaster-q.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: de15451bdd7247845973ba7e46141e57
+    m_Address: Assets/Design_Options/Weapons/blaster-k.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e1a9606c39bb3654db8259c6f75b1761
+    m_Address: Assets/Design_Options/Weapons/blaster-g.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e57d6fe4e04789b49bc4d71204c66042
+    m_Address: Assets/Design_Options/Wheels/wheel-large.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e882d0f01119b2a4691bde30a843c222
+    m_Address: Assets/Design_Options/Weapons/blaster-l.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ea288fa549aaa7849bbc508495470c01
+    m_Address: Assets/Design_Options/Body/7.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eabe5cd583a105142b49833eab0ceb37
+    m_Address: Assets/Design_Options/Body/4.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f194d984e10e0c54a9616a2f09ee7931
+    m_Address: Assets/Design_Options/Body/6.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f8cb7cb06b43019488d1fa64ce88f7d7
+    m_Address: Assets/Design_Options/Weapons/blaster-a.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 7d85dee5b80ec5443a8666908b23d8a4, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 1d19d228deaa7b84bad7ea308403f861, type: 2}
+    - {fileID: 11400000, guid: 4683a85e09de41645b588d33a762c1a5, type: 2}
