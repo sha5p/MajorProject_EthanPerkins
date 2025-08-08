@@ -16,7 +16,7 @@ public class Battle_Deisgn : MonoBehaviour
     public List<AssetReference> BodyPrefabs = new List<AssetReference>();
     public List<AssetReference> WheelPrefabs = new List<AssetReference>();
     public List<AssetReference> WeaponPrefabs = new List<AssetReference>();
-    
+
     [SerializeField]
     private string prefabPath = "Assets/Design_Options/Body/1.prefab";
 
@@ -24,8 +24,25 @@ public class Battle_Deisgn : MonoBehaviour
     private AssetReference prefabReference;
 
     public bool CarVechical;
+
+    public Dictionary<string, string> wheelToNewParentChildMap = new Dictionary<string, string>()
+    {
+        {"wheel-bl", "Wheel_RearLeft"}, 
+        {"wheel-br", "Wheel_RearRight"},
+        {"wheel-fl", "Wheel_FrontLeft"},
+        {"wheel-fr", "Wheel_FrontRight"}
+    };
+    private const string Car_Number = "Car#";
     public void Start()
     {
+        if (PlayerPrefs.HasKey(Car_Number))
+        {
+            PlayerPrefs.SetInt(Car_Number, 0);
+            PlayerPrefs.Save();
+        }
+        int loadedNumber = PlayerPrefs.GetInt(Car_Number);
+
+
         foreach (Button button in ForwardButton)
         {
             button.onClick.AddListener(() => OnForwardButtonClicked(button));
@@ -34,20 +51,24 @@ public class Battle_Deisgn : MonoBehaviour
         {
             button.onClick.AddListener(() => OnBackWardsButton(button));
         }
-        
+
     }
     void OnBackWardsButton(Button clickedButton)
     {
         string parentName = clickedButton.transform.parent.name;
         AssetReference selectedAssetRef = null;
-        if(parentName.Contains("Body") && BodyPrefabs.Count > 0)
+        if (parentName.Contains("Body") && BodyPrefabs.Count > 0)
         {
-            selectedAssetRef = BodyPrefabs[0];
+            int loadedNumber = PlayerPrefs.GetInt(Car_Number);
+            selectedAssetRef = BodyPrefabs[loadedNumber];
+            PlayerPrefs.SetInt(Car_Number, loadedNumber - 1);
+            PlayerPrefs.Save();
             CarVechical = true;
             Debug.Log("TESTING");
         }
         else if (parentName.Contains("Wheels") && WheelPrefabs.Count > 0)
         {
+
             selectedAssetRef = WheelPrefabs[0];
         }
         else if (parentName.Contains("Weapon") && WeaponPrefabs.Count > 0)
@@ -63,7 +84,10 @@ public class Battle_Deisgn : MonoBehaviour
         AssetReference selectedAssetRef = null;
         if (parentName.Contains("Body") && BodyPrefabs.Count > 0)
         {
-            selectedAssetRef = BodyPrefabs[0];
+            int loadedNumber = PlayerPrefs.GetInt(Car_Number);
+            selectedAssetRef = BodyPrefabs[loadedNumber];
+            PlayerPrefs.SetInt(Car_Number, loadedNumber+1);
+            PlayerPrefs.Save();
             CarVechical = true;
             Debug.Log("TESTING");
         }
@@ -97,33 +121,46 @@ public class Battle_Deisgn : MonoBehaviour
                 Debug.Log($"Car is not yet assigned, spawning at script's GameObject position: {spawnPosition}");
             }
             AsyncOperationHandle<GameObject> opHandle = prefabReference.InstantiateAsync(spawnPosition, spawnRotation, null);
-            
+
             opHandle.Completed += (handle) =>
             {
                 if (handle.Status == AsyncOperationStatus.Succeeded)
                 {
                     GameObject instantiatedPrefab = handle.Result;
-                    
 
                     Debug.Log($"Successfully instantiated prefab from AssetReference: {instantiatedPrefab.name}");
                     if (Car != null && CarVechical)
                     {
-                        List<Transform> childrenToMove = new List<Transform>();
+                        List<Transform> allChildrenOfOldCar = new List<Transform>();
+                        int bob = 0;
                         foreach (Transform child in Car.transform)
                         {
-                            childrenToMove.Add(child);
+                            allChildrenOfOldCar.Add(child);
+                            Debug.Log("Child name: " + child.name);
+                            if (child.name.Contains("Wheel_"))
+                            {
+                                Transform grandChildTransform = child.GetChild(0);
+                                if (grandChildTransform.name.Contains("wheel-"))
+                                {
+                                    if (instantiatedPrefab.transform.childCount > 0)
+                                    {
+                                        grandChildTransform.SetParent(instantiatedPrefab.transform.GetChild(bob));
+                                        ResetLocalTransform(grandChildTransform);
+                                        Debug.Log($"Reparented {grandChildTransform.name} to {instantiatedPrefab.transform.GetChild(bob).name}");
+                                        bob += 1;
+                                    }
+                                }                                    
+                            }
+                            if (child.name.Contains("blaster"))
+                            {
+                                child.SetParent(instantiatedPrefab.transform);
+                            }
                         }
 
-                        foreach (Transform child in childrenToMove)
-                        {
-                            child.SetParent(instantiatedPrefab.transform, true); // true maintains local position/rotation/scale
-
-                            Debug.Log($"Moved child '{child.name}' from Car to '{instantiatedPrefab.name}'");
-                        }
                         Destroy(Car);
                         Car = instantiatedPrefab;
                         CarVechical = false;
-                        instantiatedPrefab.AddComponent<Rotate>();
+                        instantiatedPrefab.AddComponent<Rotate>(); 
                     }
                 }
                 else
@@ -132,11 +169,42 @@ public class Battle_Deisgn : MonoBehaviour
                 }
 
             };
-            
+
         }
         else
         {
             Debug.LogError("Prefab Reference is not assigned!");
         }
+        
+    }
+    private Transform FindChildByNameRecursive(Transform parent, string name)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == name)
+            {
+                return child;
+            }
+            Transform found = FindChildByNameRecursive(child, name);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+        return null;
+    }
+    private void ResetLocalTransform(Transform targetTransform)
+    {
+        if (targetTransform == null)
+        {
+            Debug.LogWarning("Attempted to reset a null transform.");
+            return;
+        }
+
+        targetTransform.localPosition = Vector3.zero;
+        targetTransform.localRotation = Quaternion.identity;
+        targetTransform.localScale = Vector3.one;
+
     }
 }
+
