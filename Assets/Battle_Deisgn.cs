@@ -24,6 +24,7 @@ public class Battle_Deisgn : MonoBehaviour
     private AssetReference prefabReference;
 
     public bool CarVechical;
+    public bool WheelVechical;
 
     public Dictionary<string, string> wheelToNewParentChildMap = new Dictionary<string, string>()
     {
@@ -68,8 +69,14 @@ public class Battle_Deisgn : MonoBehaviour
         }
         else if (parentName.Contains("Wheels") && WheelPrefabs.Count > 0)
         {
-
-            selectedAssetRef = WheelPrefabs[0];
+            int currentWheelIndex = PlayerPrefs.GetInt("CurrentWheelIndex", 0);
+            currentWheelIndex = (currentWheelIndex - 1 + WheelPrefabs.Count) % WheelPrefabs.Count;
+            PlayerPrefs.SetInt("CurrentWheelIndex", currentWheelIndex);
+            PlayerPrefs.Save();
+            WheelVechical = true;
+            selectedAssetRef = WheelPrefabs[currentWheelIndex];
+            this.prefabReference = selectedAssetRef;
+            InstantiateFromAssetReference();
         }
         else if (parentName.Contains("Weapon") && WeaponPrefabs.Count > 0)
         {
@@ -90,22 +97,30 @@ public class Battle_Deisgn : MonoBehaviour
             PlayerPrefs.Save();
             CarVechical = true;
             Debug.Log("TESTING");
+            this.prefabReference = selectedAssetRef;
+            InstantiateFromAssetReference();
         }
         else if (parentName.Contains("Wheels") && WheelPrefabs.Count > 0)
         {
-            selectedAssetRef = WheelPrefabs[0];
+            int currentWheelIndex = PlayerPrefs.GetInt("CurrentWheelIndex", 0);
+            currentWheelIndex = (currentWheelIndex - 1 + WheelPrefabs.Count) % WheelPrefabs.Count;
+            PlayerPrefs.SetInt("CurrentWheelIndex", currentWheelIndex);
+            PlayerPrefs.Save();
+            WheelVechical = true;
+            selectedAssetRef = WheelPrefabs[currentWheelIndex];
+            this.prefabReference = selectedAssetRef;
+            InstantiateFromAssetReference();
         }
         else if (parentName.Contains("Weapon") && WeaponPrefabs.Count > 0)
         {
             selectedAssetRef = WeaponPrefabs[0];
         }
-        this.prefabReference = selectedAssetRef;
-        InstantiateFromAssetReference();
+        
     }
     void InstantiateFromAssetReference()
     {
-        if (prefabReference != null)
-        {
+            if (CarVechical) 
+            {
             Vector3 spawnPosition;
             Quaternion spawnRotation;
             if (Car != null)
@@ -123,60 +138,88 @@ public class Battle_Deisgn : MonoBehaviour
             AsyncOperationHandle<GameObject> opHandle = prefabReference.InstantiateAsync(spawnPosition, spawnRotation, null);
 
             opHandle.Completed += (handle) =>
-            {
-                if (handle.Status == AsyncOperationStatus.Succeeded)
                 {
-                    GameObject instantiatedPrefab = handle.Result;
-
-                    Debug.Log($"Successfully instantiated prefab from AssetReference: {instantiatedPrefab.name}");
-                    if (Car != null && CarVechical)
+                    if (handle.Status == AsyncOperationStatus.Succeeded)
                     {
-                        List<Transform> allChildrenOfOldCar = new List<Transform>();
-                        int bob = 0;
-                        foreach (Transform child in Car.transform)
+                        GameObject instantiatedPrefab = handle.Result;
+
+                        Debug.Log($"Successfully instantiated prefab from AssetReference: {instantiatedPrefab.name}");
+                        if (Car != null && CarVechical)
                         {
-                            allChildrenOfOldCar.Add(child);
-                            Debug.Log("Child name: " + child.name);
-                            if (child.name.Contains("Wheel_"))
+                            List<Transform> allChildrenOfOldCar = new List<Transform>();
+                            int bob = 0;
+                            foreach (Transform child in Car.transform)
                             {
-                                Transform grandChildTransform = child.GetChild(0);
-                                if (grandChildTransform.name.Contains("wheel-"))
+                                allChildrenOfOldCar.Add(child);
+                                Debug.Log("Child name: " + child.name);
+                                if (child.name.Contains("Wheel_"))
                                 {
-                                    if (instantiatedPrefab.transform.childCount > 0)
+                                    Transform grandChildTransform = child.GetChild(0);
+                                    if (grandChildTransform.name.Contains("wheel-"))
                                     {
-                                        grandChildTransform.SetParent(instantiatedPrefab.transform.GetChild(bob));
-                                        ResetLocalTransform(grandChildTransform);
-                                        Debug.Log($"Reparented {grandChildTransform.name} to {instantiatedPrefab.transform.GetChild(bob).name}");
-                                        bob += 1;
+                                        if (instantiatedPrefab.transform.childCount > 0)
+                                        {
+                                            grandChildTransform.SetParent(instantiatedPrefab.transform.GetChild(bob));
+                                            ResetLocalTransform(grandChildTransform);
+                                            Debug.Log($"Reparented {grandChildTransform.name} to {instantiatedPrefab.transform.GetChild(bob).name}");
+                                            bob += 1;
+                                        }
                                     }
-                                }                                    
+                                }
+                                if (child.name.Contains("blaster"))
+                                {
+                                    child.SetParent(instantiatedPrefab.transform);
+                                }
                             }
-                            if (child.name.Contains("blaster"))
-                            {
-                                child.SetParent(instantiatedPrefab.transform);
-                            }
+
+                            Destroy(Car);
+                            Car = instantiatedPrefab;
+                            CarVechical = false;
+                            instantiatedPrefab.AddComponent<Rotate>();
                         }
 
-                        Destroy(Car);
-                        Car = instantiatedPrefab;
-                        CarVechical = false;
-                        instantiatedPrefab.AddComponent<Rotate>(); 
+                    }
+                    else
+                    {
+                        Debug.LogError($"Failed to instantiate prefab from AssetReference: {handle.OperationException}");
+                    }
+
+                };
+            }
+            
+
+            else if (WheelVechical)
+            {
+                if (Car == null)
+                {
+                    Debug.LogError("Cannot replace wheels, Car object is not assigned!");
+                    WheelVechical = false;
+                    return;
+                }
+
+                List<AsyncOperationHandle> wheelHandles = new List<AsyncOperationHandle>();
+
+                foreach (Transform child in Car.transform)
+                {
+                    if (child.name.Contains("Wheel_"))
+                    {
+                        if (child.childCount > 0)
+                        {
+                            Destroy(child.GetChild(0).gameObject);
+                        }
+
+                        AsyncOperationHandle<GameObject> wheelHandle = prefabReference.InstantiateAsync(child);
+                        wheelHandles.Add(wheelHandle);
+                        Debug.Log("NO MORE THEN 4");
                     }
                 }
-                else
-                {
-                    Debug.LogError($"Failed to instantiate prefab from AssetReference: {handle.OperationException}");
-                }
+                WheelVechical = false;
+            }
 
-            };
-
-        }
-        else
-        {
-            Debug.LogError("Prefab Reference is not assigned!");
-        }
-        
     }
+
+        
+   
     private Transform FindChildByNameRecursive(Transform parent, string name)
     {
         foreach (Transform child in parent)
