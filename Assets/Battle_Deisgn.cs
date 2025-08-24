@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -25,7 +26,7 @@ public class Battle_Deisgn : MonoBehaviour
 
     public bool CarVechical;
     public bool WheelVechical;
-
+    public bool Weapon;
     public Dictionary<string, string> wheelToNewParentChildMap = new Dictionary<string, string>()
     {
         {"wheel-bl", "Wheel_RearLeft"}, 
@@ -54,6 +55,38 @@ public class Battle_Deisgn : MonoBehaviour
         }
 
     }
+    private const string PREFAB_FOLDER = "Assets/BuildsPrefab/";
+
+
+    public void SaveObjectAsPrefab(Button clickedButton)
+    {
+            if (Car == null)
+            {
+                Debug.LogError("Object to save is not assigned!");
+                return;
+            }
+
+            // Ensure the directory exists
+            if (!AssetDatabase.IsValidFolder(PREFAB_FOLDER))
+            {
+                
+                AssetDatabase.CreateFolder("Assets", "BuildsPrefab");
+            }
+
+            string prefabPath = PREFAB_FOLDER + Car.name + ".prefab";
+
+            GameObject newPrefab = PrefabUtility.SaveAsPrefabAsset(Car, prefabPath);
+
+            if (newPrefab != null)
+            {
+                Debug.Log($"Successfully saved {Car.name} as a prefab at: {prefabPath}");
+            }
+            else
+            {
+                Debug.LogError($"Failed to save {Car.name} as a prefab.");
+            }
+        
+    }
     void OnBackWardsButton(Button clickedButton)
     {
         string parentName = clickedButton.transform.parent.name;
@@ -80,10 +113,18 @@ public class Battle_Deisgn : MonoBehaviour
         }
         else if (parentName.Contains("Weapon") && WeaponPrefabs.Count > 0)
         {
-            selectedAssetRef = WeaponPrefabs[0];
+            // Use PlayerPrefs to store and retrieve the current weapon index
+            int currentWeaponIndex = PlayerPrefs.GetInt("CurrentWeaponIndex", 0);
+
+            currentWeaponIndex = (currentWeaponIndex - 1 + WeaponPrefabs.Count) % WeaponPrefabs.Count;
+            PlayerPrefs.SetInt("CurrentWeaponIndex", currentWeaponIndex);
+            PlayerPrefs.Save();
+
+            selectedAssetRef = WeaponPrefabs[currentWeaponIndex];
+            this.prefabReference = selectedAssetRef;
+            Weapon = true;
+            InstantiateFromAssetReference();
         }
-        this.prefabReference = selectedAssetRef;
-        InstantiateFromAssetReference();
     }
     void OnForwardButtonClicked(Button clickedButton)
     {
@@ -103,7 +144,7 @@ public class Battle_Deisgn : MonoBehaviour
         else if (parentName.Contains("Wheels") && WheelPrefabs.Count > 0)
         {
             int currentWheelIndex = PlayerPrefs.GetInt("CurrentWheelIndex", 0);
-            currentWheelIndex = (currentWheelIndex - 1 + WheelPrefabs.Count) % WheelPrefabs.Count;
+            currentWheelIndex = (currentWheelIndex + 1 + WheelPrefabs.Count) % WheelPrefabs.Count;
             PlayerPrefs.SetInt("CurrentWheelIndex", currentWheelIndex);
             PlayerPrefs.Save();
             WheelVechical = true;
@@ -113,9 +154,19 @@ public class Battle_Deisgn : MonoBehaviour
         }
         else if (parentName.Contains("Weapon") && WeaponPrefabs.Count > 0)
         {
-            selectedAssetRef = WeaponPrefabs[0];
+            // Use PlayerPrefs to store and retrieve the current weapon index
+            int currentWeaponIndex = PlayerPrefs.GetInt("CurrentWeaponIndex", 0);
+
+            currentWeaponIndex = (currentWeaponIndex + 1 + WeaponPrefabs.Count) % WeaponPrefabs.Count;
+            PlayerPrefs.SetInt("CurrentWeaponIndex", currentWeaponIndex);
+            PlayerPrefs.Save();
+
+            selectedAssetRef = WeaponPrefabs[currentWeaponIndex];
+            this.prefabReference = selectedAssetRef;
+            Weapon = true;
+            InstantiateFromAssetReference();
         }
-        
+
     }
     void InstantiateFromAssetReference()
     {
@@ -166,9 +217,18 @@ public class Battle_Deisgn : MonoBehaviour
                                         }
                                     }
                                 }
-                                if (child.name.Contains("blaster"))
+                                if (child.name.Contains("WeaponMount"))
                                 {
-                                    child.SetParent(instantiatedPrefab.transform);
+                                    if (child.childCount > 0)
+                                    {
+
+                                        Transform weaponToReparent = child.GetChild(0);
+
+                                        weaponToReparent.SetParent(instantiatedPrefab.transform.GetChild(bob));
+
+                                    }
+                                    Destroy(child.gameObject);
+
                                 }
                             }
 
@@ -214,6 +274,42 @@ public class Battle_Deisgn : MonoBehaviour
                     }
                 }
                 WheelVechical = false;
+            }
+
+            else if (Weapon)
+            {
+                
+
+                Transform weaponMountPoint = FindChildByNameRecursive(Car.transform, "WeaponMount");
+
+                if (weaponMountPoint == null)
+                {
+                    Debug.LogError("WeaponMount child object not found on the current car!");
+                    Weapon = false;
+                    return;
+                }
+
+                if (weaponMountPoint.childCount > 0)
+                {
+                    Destroy(weaponMountPoint.GetChild(0).gameObject);
+                }
+
+                AsyncOperationHandle<GameObject> weaponHandle = prefabReference.InstantiateAsync(weaponMountPoint);
+                weaponHandle.Completed += (handle) =>
+                {
+                    if (handle.Status == AsyncOperationStatus.Succeeded)
+                    {
+                        GameObject instantiatedWeapon = handle.Result;
+                        instantiatedWeapon.transform.localPosition = Vector3.zero;
+                        instantiatedWeapon.transform.localRotation = Quaternion.identity;
+                        Debug.Log($"Successfully instantiated weapon: {instantiatedWeapon.name}");
+                    }
+                    else
+                    {
+                        Debug.LogError($"Failed to instantiate weapon: {handle.OperationException}");
+                    }
+                };
+                Weapon = false;
             }
 
     }
