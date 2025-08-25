@@ -1,16 +1,26 @@
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public GameObject canvas;
+    public GameObject design;
+
+    public void FadeOutUI()
     {
-        
+        design.gameObject.SetActive(false);
+        canvas.gameObject.SetActive(true);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void FadeInUI()
     {
-        
+        design.gameObject.SetActive(true);
+        canvas.gameObject.SetActive(false);
     }
+    public void LoadMAP()
+    {
+        SceneManager.LoadScene("BattleGround");
+    }
+
 }
