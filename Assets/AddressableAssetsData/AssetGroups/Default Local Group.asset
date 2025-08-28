@@ -55,6 +55,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2d2c39217120eaf4a82bd37ed582ba4b
+    m_Address: Assets/BuildsPrefab/2(Clone).prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vehicles
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3385612a88da992489bf8dc79595865d
     m_Address: Assets/Design_Options/Weapons/blaster-d.fbx
     m_ReadOnly: 0
@@ -69,6 +75,12 @@ MonoBehaviour:
     m_Address: Assets/Design_Options/Body/8.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 61e303b9aae3f1e439af5413e789f620
+    m_Address: Assets/BuildsPrefab/3(Clone).prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vehicles
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 728face54f3d7b140b222025f8e786de
     m_Address: Assets/Design_Options/Weapons/MW_8.prefab
@@ -94,6 +106,12 @@ MonoBehaviour:
     m_Address: Assets/Design_Options/Weapons/blaster-e.fbx
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: be55b910fb707b5428ede2ce135e059a
+    m_Address: Assets/BuildsPrefab/1(Clone).prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vehicles
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c26077c4a1d78a74cb504cd9c733e1cc
     m_Address: Assets/Design_Options/Body/3.prefab

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.AddressableAssets.Settings;
+using UnityEditor.AddressableAssets;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -60,32 +62,32 @@ public class Battle_Deisgn : MonoBehaviour
 
     public void SaveObjectAsPrefab(Button clickedButton)
     {
-            if (Car == null)
-            {
-                Debug.LogError("Object to save is not assigned!");
-                return;
-            }
+        if (Car == null)
+        {
+            Debug.LogError("Object to save is not assigned!");
+            return;
+        }
 
-            // Ensure the directory exists
-            if (!AssetDatabase.IsValidFolder(PREFAB_FOLDER))
-            {
-                
-                AssetDatabase.CreateFolder("Assets", "BuildsPrefab");
-            }
+        // Ensure the directory exists
+        if (!AssetDatabase.IsValidFolder(PREFAB_FOLDER))
+        {
+            AssetDatabase.CreateFolder("Assets", "BuildsPrefab");
+        }
 
-            string prefabPath = PREFAB_FOLDER + Car.name + ".prefab";
+        string prefabPath = PREFAB_FOLDER + Car.name + ".prefab";
 
-            GameObject newPrefab = PrefabUtility.SaveAsPrefabAsset(Car, prefabPath);
+        GameObject newPrefab = PrefabUtility.SaveAsPrefabAsset(Car, prefabPath);
 
-            if (newPrefab != null)
-            {
-                Debug.Log($"Successfully saved {Car.name} as a prefab at: {prefabPath}");
-            }
-            else
-            {
-                Debug.LogError($"Failed to save {Car.name} as a prefab.");
-            }
-        
+        if (newPrefab != null)
+        {
+            Debug.Log($"Successfully saved {Car.name} as a prefab at: {prefabPath}");
+
+            MakePrefabAddressable(prefabPath, Car.name);
+        }
+        else
+        {
+            Debug.LogError($"Failed to save {Car.name} as a prefab.");
+        }
     }
     void OnBackWardsButton(Button clickedButton)
     {
@@ -345,5 +347,44 @@ public class Battle_Deisgn : MonoBehaviour
         targetTransform.localScale = Vector3.one;
 
     }
+    private void MakePrefabAddressable(string assetPath, string addressName, string labelName = "Vehicles")
+    {
+        AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+        if (settings == null)
+        {
+            Debug.LogError("No AddressableAssetSettings found. Please create one first!");
+            return;
+        }
+
+        string guid = AssetDatabase.AssetPathToGUID(assetPath);
+        AddressableAssetEntry entry = settings.FindAssetEntry(guid);
+
+        if (entry == null)
+        {
+            AddressableAssetGroup group = settings.DefaultGroup;
+            entry = settings.CreateOrMoveEntry(guid, group);
+            entry.address = addressName;
+            Debug.Log($"{addressName} is now addressab");
+        }
+        else
+        {
+            Debug.Log($"{addressName} is already addre");
+        }
+
+        if (!settings.GetLabels().Contains(labelName))
+        {
+            settings.AddLabel(labelName);
+        }
+
+        if (!entry.labels.Contains(labelName))
+        {
+            entry.labels.Add(labelName);
+            Debug.Log($"Added label '{labelName}' to {addressName}");
+        }
+
+        settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, entry, true);
+        AssetDatabase.SaveAssets();
+    }
+
 }
 
