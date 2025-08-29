@@ -113,6 +113,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Vehicles
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c122ef9facfa15c41ba24edb7aab0ef2
+    m_Address: 4(Clone)
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vehicles
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c26077c4a1d78a74cb504cd9c733e1cc
     m_Address: Assets/Design_Options/Body/3.prefab
     m_ReadOnly: 0

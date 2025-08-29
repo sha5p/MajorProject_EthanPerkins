@@ -6,6 +6,7 @@ public class MainMenu : MonoBehaviour
 {
     public GameObject canvas;
     public GameObject design;
+    public GameObject Builds;
 
     public void FadeOutUI()
     {
@@ -22,5 +23,14 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene("BattleGround");
     }
-
+    public void BuildsFadeIN()
+    {
+        Builds.gameObject.SetActive(true);
+        canvas.gameObject.SetActive(false);
+    }
+    public void BuildsFadeOut()
+    {
+        Builds.gameObject.SetActive(false);
+        canvas.gameObject.SetActive(true);
+    }
 }
