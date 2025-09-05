@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections.Generic;
-using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 public class VehicleMenuGenerator : MonoBehaviour
 {
@@ -113,7 +113,12 @@ public class VehicleMenuGenerator : MonoBehaviour
         {
             label.text = prefab.name;
         }
-
+        Button selectButton = uiEntry.GetComponentInChildren<Button>();
+        if (selectButton != null)
+        {
+            GameObject carToSelect = prefab;
+            selectButton.onClick.AddListener(() => OnCarSelected(carToSelect));
+        }
         prefabIndex++;
     }
 
@@ -127,5 +132,14 @@ public class VehicleMenuGenerator : MonoBehaviour
         foreach (Renderer r in renderers)
             bounds.Encapsulate(r.bounds);
         return bounds;
+    }
+
+    private void OnCarSelected(GameObject selectedCarPrefab)
+    {
+        PlayerPrefs.SetString("SelectedCarName", selectedCarPrefab.name);
+        Debug.Log($"Selected car: {selectedCarPrefab.name}. Saved to PlayerPrefs.");
+
+        // 2. Load the battleground scene.
+        SceneManager.LoadScene("BattleGround");
     }
 }

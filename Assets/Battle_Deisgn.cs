@@ -68,27 +68,40 @@ public class Battle_Deisgn : MonoBehaviour
             return;
         }
 
-        // Ensure the directory exists
+        int nextNumber = GetNextPrefabNumber();
+        string newCarName = nextNumber.ToString();
+
         if (!AssetDatabase.IsValidFolder(PREFAB_FOLDER))
         {
             AssetDatabase.CreateFolder("Assets", "BuildsPrefab");
         }
 
-        string prefabPath = PREFAB_FOLDER + Car.name + ".prefab";
+        string prefabPath = PREFAB_FOLDER + newCarName + ".prefab";
 
         GameObject newPrefab = PrefabUtility.SaveAsPrefabAsset(Car, prefabPath);
 
         if (newPrefab != null)
         {
-            Debug.Log($"Successfully saved {Car.name} as a prefab at: {prefabPath}");
-
-            MakePrefabAddressable(prefabPath, Car.name);
+            Debug.Log($"Successfully saved {newCarName} as a prefab at: {prefabPath}");
+            MakePrefabAddressable(prefabPath, newCarName);
         }
         else
         {
             Debug.LogError($"Failed to save {Car.name} as a prefab.");
         }
     }
+    private int GetNextPrefabNumber()
+{
+    if (!System.IO.Directory.Exists(PREFAB_FOLDER))
+    {
+        return 0; 
+    }
+    
+    // Get all files with a .prefab extension
+    string[] prefabFiles = System.IO.Directory.GetFiles(PREFAB_FOLDER, "*.prefab");
+    
+    return prefabFiles.Length;
+}
     void OnBackWardsButton(Button clickedButton)
     {
         string parentName = clickedButton.transform.parent.name;
@@ -136,7 +149,8 @@ public class Battle_Deisgn : MonoBehaviour
         {
             int loadedNumber = PlayerPrefs.GetInt(Car_Number);
             selectedAssetRef = BodyPrefabs[loadedNumber];
-            PlayerPrefs.SetInt(Car_Number, loadedNumber+1);
+            PlayerPrefs.SetInt(Car_Number, (loadedNumber + 1) % BodyPrefabs.Count);
+
             PlayerPrefs.Save();
             CarVechical = true;
             Debug.Log("TESTING");
