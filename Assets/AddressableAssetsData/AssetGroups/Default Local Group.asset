@@ -26,6 +26,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - Vehicles
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 151d3b1883ba3b7409ad564fa41b3367
+    m_Address: Assets/BulletPrefab.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 171c5878e020eb942bbc75e2d3ff4c52
     m_Address: Assets/Design_Options/Weapons/blaster-f.fbx
     m_ReadOnly: 0
@@ -151,6 +156,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eaf73a5117b9fdb41989a653b63a8fc2
+    m_Address: 2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vehicles
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f194d984e10e0c54a9616a2f09ee7931
     m_Address: Assets/Design_Options/Body/6.prefab
     m_ReadOnly: 0
@@ -165,6 +176,12 @@ MonoBehaviour:
     m_Address: Assets/Design_Options/Weapons/blaster-a.fbx
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa5ae766531380c4f9431b4e34f7998e
+    m_Address: 1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vehicles
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 7d85dee5b80ec5443a8666908b23d8a4, type: 2}
