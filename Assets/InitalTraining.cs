@@ -1,3 +1,6 @@
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -49,7 +52,22 @@ public class InitalTraining : MonoBehaviour
             Debug.Log("MeshCollider added to the new car.");
 
             Rotate rotateScript = instantiatedCar.GetComponent<Rotate>();
+            // 1. Get the existing generic Agent component (if it exists)
+            Agent existingAgent = instantiatedCar.GetComponent<Agent>();
+
+            // 2. Destroy the existing generic Agent component
+            if (existingAgent != null)
+            {
+                Object.Destroy(existingAgent);
+            }
+
+            // 3. Add your specific BattleAI component
             BattleAI battleScript = instantiatedCar.AddComponent<BattleAI>();
+
+
+
+
+
             GameObject myObject = GameObject.Find("WeaponMount");
             foreach (Transform childTransform in myObject.transform)
             {
