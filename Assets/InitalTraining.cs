@@ -37,8 +37,15 @@ public class InitalTraining : MonoBehaviour
 
             if (carSpawnPoint != null)
             {
-                instantiatedCar = Instantiate(loadedCarPrefab, carSpawnPoint.position, carSpawnPoint.rotation);
+                instantiatedCar = Instantiate(
+                    loadedCarPrefab,
+                    carSpawnPoint.position,
+                    carSpawnPoint.rotation,
+                    carSpawnPoint.parent
+                );
+
             }
+
             else
             {
                 // Capture the instantiated object here as well
@@ -47,8 +54,7 @@ public class InitalTraining : MonoBehaviour
             }
 
             // Add the MeshCollider to the instantiated car
-            instantiatedCar.AddComponent<Rigidbody>();
-            instantiatedCar.AddComponent<BoxCollider>();
+
             Debug.Log("MeshCollider added to the new car.");
 
             Rotate rotateScript = instantiatedCar.GetComponent<Rotate>();
@@ -61,22 +67,23 @@ public class InitalTraining : MonoBehaviour
                 Object.Destroy(existingAgent);
             }
 
-            // 3. Add your specific BattleAI component
             BattleAI battleScript = instantiatedCar.AddComponent<BattleAI>();
 
 
 
 
-
-            GameObject myObject = GameObject.Find("WeaponMount");
-            foreach (Transform childTransform in myObject.transform)
+            Transform weaponMount = instantiatedCar.transform.Find("WeaponMount");
+            if (weaponMount != null)
             {
-                Debug.Log($"IDK somthing to identify {childTransform.name}");
-                if (childTransform.name.Contains("blaster"))
+                foreach (Transform child in weaponMount)
                 {
-                    ShootingScript ShootingScript = childTransform.AddComponent<ShootingScript>();
+                    if (child.name.Contains("blaster"))
+                    {
+                        child.gameObject.AddComponent<ShootingScript>();
+                    }
                 }
             }
+
 
 
             if (rotateScript != null)

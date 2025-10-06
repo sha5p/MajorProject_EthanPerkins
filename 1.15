@@ -1,0 +1,17 @@
+Requirement already satisfied: numpy==1.21.2 in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (1.21.2)
+Requirement already satisfied: protobuf==3.20.3 in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (3.20.3)
+Collecting tensorboard
+  Using cached tensorboard-2.20.0-py3-none-any.whl.metadata (1.8 kB)
+Requirement already satisfied: absl-py>=0.4 in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (from tensorboard) (2.3.1)
+Requirement already satisfied: grpcio>=1.48.2 in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (from tensorboard) (1.75.1)
+Requirement already satisfied: markdown>=2.6.8 in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (from tensorboard) (3.9)
+Requirement already satisfied: packaging in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (from tensorboard) (25.0)
+Requirement already satisfied: pillow in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (from tensorboard) (11.3.0)
+Requirement already satisfied: setuptools>=41.0.0 in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (from tensorboard) (57.4.0)
+Requirement already satisfied: tensorboard-data-server<0.8.0,>=0.7.0 in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (from tensorboard) (0.7.2)
+Requirement already satisfied: werkzeug>=1.0.1 in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (from tensorboard) (3.1.3)
+Requirement already satisfied: typing-extensions~=4.12 in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (from grpcio>=1.48.2->tensorboard) (4.15.0)
+Requirement already satisfied: MarkupSafe>=2.1.1 in c:\users\sharp\documents\unity_games\majorproject_ethanperkins\venv310\lib\site-packages (from werkzeug>=1.0.1->tensorboard) (3.0.3)
+Using cached tensorboard-2.20.0-py3-none-any.whl (5.5 MB)
+Installing collected packages: tensorboard
+Successfully installed tensorboard-2.20.0

@@ -73,3 +73,25 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+# Python virtual environments
+venv*/
+ENV*/
+env*/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ML-Agents training results
+/results/
+/models/
+/summaries/
+
+# Optional: ignore ONNX models if you save them elsewhere
+*.onnx
+
+# TensorBoard logs
+/events.out.tfevents.*

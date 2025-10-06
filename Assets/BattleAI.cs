@@ -1,7 +1,7 @@
+using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
-using UnityEngine;
 
 public class BattleAI : Agent
 {
@@ -12,57 +12,143 @@ public class BattleAI : Agent
     [Header("Target")]
     public Transform target; // Assign target in Inspector
 
+    [Header("Distance Settings")]
+    public float minDistance = 3f;
+    public float maxDistance = 5f;
+
+    private Rigidbody rb;
+    private const float maxEnvDistance = 10f; // For normalization and scaling
+
+    // ✅ Called once when the agent is initialized
+    public override void Initialize()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+        MaxStep = 1000;
+
+        // Auto-find target if not assigned
+        if (target == null)
+        {
+            Transform envParent = transform.parent;
+            if (envParent != null)
+            {
+                foreach (Transform child in envParent)
+                {
+                    if (child.CompareTag("Player"))
+                    {
+                        target = child;
+                        Debug.Log($"{name} found target: {target.name}");
+                        break;
+                    }
+                }
+            }
+
+            if (target == null)
+            {
+                Debug.LogWarning($"{name} could not find a Player-tagged object in its environment.");
+            }
+        }
+    }
+
+    // ✅ Called every new training episode
     public override void OnEpisodeBegin()
     {
+        // Randomize desired range every episode for generalization
+        float baseDistance = Random.Range(2f, 6f);
+        minDistance = baseDistance;
+        maxDistance = baseDistance + 2f;
+
         ResetAgent();
     }
 
     private void FixedUpdate()
     {
-        // Optional raycast
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 20f))
-            Debug.Log("Hit: " + hit.collider.name);
-
-        //RequestDecision(); // forces Heuristic to be called every FixedUpdate
+        RequestDecision();
     }
-
 
     private void ResetAgent()
     {
-        // Reset agent position and rotation
-        transform.position = new Vector3(Random.Range(-4f, 4f), 0.5f, Random.Range(-4f, 4f));
-        transform.rotation = Quaternion.identity;
+        Transform envParent = transform.parent;
+        Transform spawnPoint = envParent != null ? envParent.Find("SpawnPoint") : null;
 
-        // Reset target position
-        if (target != null)
-            target.position = new Vector3(Random.Range(-4f, 4f), 0.5f, Random.Range(-4f, 4f));
+        if (spawnPoint != null)
+        {
+            transform.SetParent(envParent);
+            transform.localPosition = spawnPoint.localPosition;
+            transform.localRotation = spawnPoint.localRotation;
+        }
+        else
+        {
+            transform.SetParent(envParent);
+            transform.localPosition = new Vector3(Random.Range(-4f, 4f), 0.5f, Random.Range(-4f, 4f));
+            transform.localRotation = Quaternion.identity;
+        }
     }
 
+    // ✅ Observations for the neural network
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        if (target == null)
+        {
+            sensor.AddObservation(Vector3.zero);
+            sensor.AddObservation(0f);
+            sensor.AddObservation(0f);
+            sensor.AddObservation(0f);
+            return;
+        }
+
+        // Normalize observations for better learning
+        Vector3 relativePos = (transform.position - target.position) / maxEnvDistance;
+        float distance = Vector3.Distance(transform.position, target.position) / maxEnvDistance;
+
+        sensor.AddObservation(relativePos);     // 3 floats
+        sensor.AddObservation(distance);        // 1 float
+        sensor.AddObservation(minDistance / maxEnvDistance);
+        sensor.AddObservation(maxDistance / maxEnvDistance);
+    }
+
+    // ✅ Main decision-making logic
     public override void OnActionReceived(ActionBuffers actions)
     {
         float moveZ = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
         float moveX = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
 
-        // World-relative movement
-        Vector3 movement = new Vector3(moveX, 0f, moveZ);
+        // Apply velocity-based movement
+        Vector3 move = new Vector3(moveX, 0f, moveZ).normalized * speed;
+        rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
 
-        if (movement != Vector3.zero)
+        // Rotate smoothly towards movement direction
+        if (move != Vector3.zero)
         {
-            transform.Translate(movement * speed * Time.deltaTime, Space.World);
+            Quaternion targetRot = Quaternion.LookRotation(move, Vector3.up);
+            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRot, rotationSpeed * Time.fixedDeltaTime));
         }
 
-        // Reward for getting closer to the target
-        if (target != null)
+        if (target == null)
         {
-            float distanceToTarget = Vector3.Distance(transform.position, target.position);
+            AddReward(-0.001f); // Slight penalty if no target assigned
+            return;
+        }
 
-            AddReward(0.01f * (1f / (distanceToTarget + 0.01f)));
+        // ✅ Distance-based reward shaping
+        float distanceToTarget = Vector3.Distance(transform.position, target.position);
+        float idealMid = (minDistance + maxDistance) / 2f;
+        float deviation = Mathf.Abs(distanceToTarget - idealMid);
 
-            if (distanceToTarget < 1.0f)
-            {
-                AddReward(1.0f);
-                EndEpisode();
-            }
+        // Continuous reward based on closeness to ideal distance
+        AddReward(Mathf.Max(0f, 0.01f - 0.001f * deviation));
+
+        // Bonus reward for staying inside the range
+        if (distanceToTarget >= minDistance && distanceToTarget <= maxDistance)
+        {
+            AddReward(0.01f);
+        }
+
+        // Penalize and end if far outside desired range
+        if (distanceToTarget < minDistance * 0.3f || distanceToTarget > maxDistance * 2f)
+        {
+            AddReward(-1.0f);
+            EndEpisode();
         }
     }
 
@@ -70,66 +156,15 @@ public class BattleAI : Agent
     {
         var continuousActionsOut = actionsOut.ContinuousActions;
 
-        // Arrow keys: world-relative movement
-        continuousActionsOut[0] = Input.GetKey(KeyCode.UpArrow) ? 1f :
-                                  Input.GetKey(KeyCode.DownArrow) ? -1f : 0f;
+        float moveZ = 0f;
+        if (Input.GetKey(KeyCode.UpArrow)) moveZ = 1f;
+        if (Input.GetKey(KeyCode.DownArrow)) moveZ = -1f;
 
-        continuousActionsOut[1] = Input.GetKey(KeyCode.RightArrow) ? 1f :
-                                  Input.GetKey(KeyCode.LeftArrow) ? -1f : 0f;
+        float moveX = 0f;
+        if (Input.GetKey(KeyCode.RightArrow)) moveX = 1f;
+        if (Input.GetKey(KeyCode.LeftArrow)) moveX = -1f;
 
-        Debug.Log($"Heuristic called: Forward={continuousActionsOut[0]}, Right={continuousActionsOut[1]}");
+        continuousActionsOut[0] = moveZ;
+        continuousActionsOut[1] = moveX;
     }
-
 }
-
-
-/*   private Transform FindChildByNameRecursive(Transform parent, string name)
-   {
-       foreach (Transform child in parent)
-       {
-           if (child.name == name)
-           {
-               return child;
-           }
-           Transform found = FindChildByNameRecursive(child, name);
-           if (found != null)
-           {
-               return found;
-           }
-       }
-       return null;
-   }
-
-*/
-
-/*
-void Update()
-{
-    Vector3 movement = Vector3.zero;
-
-    if (Input.GetKey(KeyCode.UpArrow))
-    {
-        movement += Vector3.back;
-    }
-    if (Input.GetKey(KeyCode.DownArrow))
-    {
-        movement += Vector3.forward;
-    }
-    if (Input.GetKey(KeyCode.LeftArrow))
-    {
-        movement += Vector3.right;
-    }
-    if (Input.GetKey(KeyCode.RightArrow))
-    {
-        movement += Vector3.left;
-    }
-
-    if (movement != Vector3.zero)
-    {
-        Quaternion targetRotation = Quaternion.LookRotation(-movement);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-    }
-
-    transform.Translate(movement * speed * Time.deltaTime, Space.World); 
-}
-*/
