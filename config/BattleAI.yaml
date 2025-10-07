@@ -1,28 +1,21 @@
-behaviors:
-  BattleAI:
-    trainer_type: ppo
-    decision_interval: 1      
-    hyperparameters:
-      learning_rate: 0.0003
-      learning_rate_schedule: constant
-      batch_size: 64
-      buffer_size: 50000
-      buffer_init_steps: 0
-      tau: 0.005
-      steps_per_update: 10.0
-      save_replay_buffer: false
-      init_entcoef: 0.01
-      reward_signal_steps_per_update: 10.0
-    network_settings:
-      normalize: false
-      hidden_units: 64
-      num_layers: 2
-      vis_encode_type: simple
-    reward_signals:
-      extrinsic:
-        gamma: 0.99
-        strength: 1.0
-    keep_checkpoints: 5
-    max_steps: 500000
-    time_horizon: 10
-    summary_freq: 2000
+BattleAI:
+  trainer_type: ppo
+  hyperparameters:
+    batch_size: 1024
+    buffer_size: 10240
+    learning_rate: 3.0e-4
+    beta: 5.0e-3
+    epsilon: 0.2
+    lambd: 0.95
+    num_epoch: 3
+  network_settings:
+    normalize: false
+    hidden_units: 128
+    num_layers: 2
+  reward_signals:
+    extrinsic:
+      gamma: 0.99
+      strength: 1.0
+  max_steps: 500000
+  time_horizon: 64
+  summary_freq: 50000
