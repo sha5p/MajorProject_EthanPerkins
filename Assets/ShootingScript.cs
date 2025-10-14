@@ -14,6 +14,7 @@ public class ShootingScript : MonoBehaviour
 
     void Start()
     {
+
         if (!string.IsNullOrEmpty(bulletPrefabAddress))
         {
             opHandle = Addressables.LoadAssetAsync<GameObject>(bulletPrefabAddress);
@@ -24,6 +25,7 @@ public class ShootingScript : MonoBehaviour
         {
             Debug.LogError("Bullet Prefab Address is not set!");
         }
+        InvokeRepeating("Spawn", 3.0f, 3.0f);
     }
 
     private void OnPrefabLoaded(AsyncOperationHandle<GameObject> obj)
@@ -40,7 +42,21 @@ public class ShootingScript : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void Spawn()
+    {
+       nextFireTime = Time.time + fireRate;
+
+       Debug.Log("Shooting");
+       GameObject bullet = Instantiate(loadedBulletPrefab, transform.position, transform.rotation);
+
+       Rigidbody rb = bullet.GetComponent<Rigidbody>();
+       if (rb != null)
+        {
+            rb.AddForce(-bullet.transform.forward * 1000f);
+        }
+    }
+
+    /*private void Update()
     {
         if (isPrefabLoaded && Input.GetMouseButton(0) && Time.time >= nextFireTime)
         {
@@ -56,7 +72,8 @@ public class ShootingScript : MonoBehaviour
             }
         }
     }
-
+    */
+    
     void OnDestroy()
     {
         if (opHandle.IsValid())
