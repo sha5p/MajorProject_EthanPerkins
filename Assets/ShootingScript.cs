@@ -11,7 +11,7 @@ public class ShootingScript : MonoBehaviour
 
     public float fireRate = 1.0f; // Fire a bullet every 1 second
     private float nextFireTime = 0f;
-
+    public float currentRepeatRate = 1f;
     void Start()
     {
 
@@ -25,7 +25,7 @@ public class ShootingScript : MonoBehaviour
         {
             Debug.LogError("Bullet Prefab Address is not set!");
         }
-        InvokeRepeating("Spawn", 3.0f, 3.0f);
+        InvokeRepeating("Spawn", currentRepeatRate, currentRepeatRate);
     }
 
     private void OnPrefabLoaded(AsyncOperationHandle<GameObject> obj)
