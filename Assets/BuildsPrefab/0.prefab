@@ -84,7 +84,7 @@ GameObject:
   - component: {fileID: -2103041236511777890}
   m_Layer: 0
   m_Name: 0
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -563,7 +563,7 @@ GameObject:
   - component: {fileID: 2678786766281229404}
   m_Layer: 0
   m_Name: blaster-a
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -1,4 +1,6 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI; 
 public class PlayerSettings : MonoBehaviour
 {
@@ -13,26 +15,38 @@ public class PlayerSettings : MonoBehaviour
         {
            
             volumeSlider.value = (Distance - 1f) / 9f;
-            volumeSlider.onValueChanged.AddListener(UpdateDisVolume);
+            volumeSlider.onValueChanged.AddListener(UpdateDis);
             volumeSlider.onValueChanged.AddListener(UpdateDisSpeed);
         }
     }
 
     // This method will be called whenever the slider's value changes
-    public void UpdateDisVolume(float newSliderValue)
+    public void UpdateDis(float newSliderValue)
     {
+
         // Map the 0-1 slider value to the 1-10 Distance value
         Distance = 1f + (newSliderValue * 9f);
-        Debug.Log("Distance " + Distance); // Optional: Log the new value
-        BattleAI battleAI = GetComponent<BattleAI>();
-        battleAI.minDistance = Distance;
-        battleAI.maxDistance = Distance+2;
+        BattleAI battleAI = Object.FindFirstObjectByType<BattleAI>();
+
+
+        if (battleAI != null)
+        {
+            battleAI.SetDistance(Distance);
+        }
+        else
+        {
+            Debug.LogWarning("no BattleAI found in scene!");
+        }
+
+
     }
     public void UpdateDisSpeed(float newSliderValue)
     {
+        GameObject targetGameObject = GameObject.Find("blaster-a");
         Speed = 1f + (newSliderValue * 9f);
-        Debug.Log("Speed " + Speed);
-        ShootingScript shootingsScript = GetComponent<ShootingScript>();
+        Debug.Log("Speed " + targetGameObject);
+        ShootingScript shootingsScript = targetGameObject.GetComponent<ShootingScript>();
         shootingsScript.currentRepeatRate = Speed;
+        shootingsScript.UpdateFireRate(shootingsScript.currentRepeatRate);
     }
 }

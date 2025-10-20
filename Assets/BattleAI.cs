@@ -27,7 +27,7 @@ public class BattleAI : Agent
     {
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
-        MaxStep = 1000;
+        MaxStep = 0;
 
         if (target == null)
         {
@@ -49,16 +49,21 @@ public class BattleAI : Agent
                 Debug.LogWarning($"{name} could not find a Player-tagged object in its environment.");
         }
     }
-
+    public float baseDistance = 4f;
     public override void OnEpisodeBegin()
     {
-        float baseDistance = Random.Range(2f, 6f);
-        minDistance = baseDistance;
-        maxDistance = baseDistance + 2f;
-
         ResetAgent();
+        
+        //Random.Range(2f, 6f);
+        //minDistance = baseDistance;
+        //maxDistance = baseDistance + 2f;
     }
-
+    public void SetDistance(float distance)
+    {
+        baseDistance = distance;
+        minDistance = distance;
+        maxDistance = distance + 2f;
+    }
     private void FixedUpdate()
     {
         RequestDecision();
@@ -110,22 +115,27 @@ public class BattleAI : Agent
         float moveZ = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
         float moveX = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
 
-        // Base movement vector
         Vector3 move = new Vector3(moveX, 0f, moveZ);
         if (move.magnitude > 1f) move.Normalize();
         move *= speed;
 
-        // Direction to target
         Vector3 dirToTarget = (target.position - transform.position).normalized;
         float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
-        // Distance-based bias
-        if (distanceToTarget < minDistance)
-            move -= dirToTarget * speed;
-        else if (distanceToTarget > maxDistance)
-            move += dirToTarget * speed;
+        float distanceError = 0f;
 
-        // Strafing bias (optional hard-coded)
+        if (distanceToTarget < minDistance)
+        {
+            distanceError = minDistance - distanceToTarget; // push away if too close
+            move -= dirToTarget * distanceError * speed;   // scale by speed
+        }
+        else if (distanceToTarget > maxDistance)
+        {
+            distanceError = distanceToTarget - maxDistance; // pull closer if too far
+            move += dirToTarget * distanceError * speed;    // scale by speed
+        }
+
+        // Strafing inside the range
         if (distanceToTarget >= minDistance && distanceToTarget <= maxDistance)
         {
             Vector3 lateral = Vector3.Cross(Vector3.up, dirToTarget);
@@ -133,7 +143,6 @@ public class BattleAI : Agent
             move += lateral * strafeDir * strafeMagnitude;
         }
 
-        // Apply velocity and rotation
         Vector3 targetVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
         rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, targetVelocity, velocitySmooth);
 
@@ -145,7 +154,6 @@ public class BattleAI : Agent
         }
         previousMove = smoothMove;
 
-        // === Reward shaping ===
         float idealMid = (minDistance + maxDistance) / 2f;
         float deviation = Mathf.Abs(distanceToTarget - idealMid);
 
@@ -171,7 +179,7 @@ public class BattleAI : Agent
         if (distanceToTarget > maxDistance * 3f)
         {
             AddReward(-1f);
-            EndEpisode();
+            //EndEpisode();
         }
     }
 
