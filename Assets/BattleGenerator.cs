@@ -136,14 +136,19 @@ public class BattleGenerator : MonoBehaviour
     public BattleText battletext;
     private void BattleSelected(GameObject selectedCarPrefab)
     {
-        
-        if ((PlayerPrefs.HasKey("BattleCarVar")))
+        //PlayerPrefs.DeleteKey("BattleCarVar");
+
+
+        //PlayerPrefs.Save();
+        if (!(PlayerPrefs.HasKey("BattleCarVar")))
         {
+            PlayerPrefs.SetString("BattleCarVar", selectedCarPrefab.name);
             Debug.Log("Player does not ahve");
             battletext.ChangeText("1/2");
         }
         else
         {
+            PlayerPrefs.SetString("BattleCarVar2", selectedCarPrefab.name);
             Debug.Log("Player does  ahve");
             battletext.ChangeText("2/2");
         }
@@ -151,6 +156,23 @@ public class BattleGenerator : MonoBehaviour
 
         // 2. Load the battleground scene.  
         //SceneManager.LoadScene("BattleGround");
+    }
+    public void cancel()
+    {
+        const string KEY_CAR_1 = "BattleCarVar";
+        const string KEY_CAR_2 = "BattleCarVar2";
+        if (PlayerPrefs.HasKey(KEY_CAR_1))
+        {
+            PlayerPrefs.DeleteKey(KEY_CAR_1);
+        }
+
+        if (PlayerPrefs.HasKey(KEY_CAR_2))
+        {
+            PlayerPrefs.DeleteKey(KEY_CAR_2);
+        }
+        PlayerPrefs.Save();
+        battletext.ChangeText("0/2");
+
     }
 }
 
