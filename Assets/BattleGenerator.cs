@@ -28,7 +28,21 @@ public class BattleGenerator : MonoBehaviour
     private Transform previewRoot;
     private int prefabIndex = 0;
     private float nextY = 0f;
-
+    public void OnDisable()
+    {
+        if (previewRoot != null)
+        {
+            previewRoot.gameObject.SetActive(false);
+        }
+    }
+    public void ShowPreviews()
+    {
+        if (previewRoot != null)
+        {
+            previewRoot.gameObject.SetActive(true);
+            Debug.Log("VehicleMenuGenerator: Showing all preview cars and cameras.");
+        }
+    }
     void Start()
     {
         if (uiParent == null)
@@ -109,6 +123,7 @@ public class BattleGenerator : MonoBehaviour
 
             GameObject camObj = new GameObject(prefab.name + "_PreviewCam");
             Camera cam = camObj.AddComponent<Camera>();
+            camObj.transform.SetParent(previewRoot); 
             cam.targetTexture = rtTexture;
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = backgroundColor;
@@ -148,7 +163,7 @@ public class BattleGenerator : MonoBehaviour
         //PlayerPrefs.DeleteKey("BattleCarVar");
 
 
-        //PlayerPrefs.Save();
+        
         if (!(PlayerPrefs.HasKey("BattleCarVar")))
         {
             PlayerPrefs.SetString("BattleCarVar", selectedCarPrefab.name);
@@ -162,16 +177,17 @@ public class BattleGenerator : MonoBehaviour
             battletext.ChangeText("2/2");
         }
         Debug.Log($"Selected car: {selectedCarPrefab.name}. Saved to PlayerPrefs.");
-
+        PlayerPrefs.Save();
         // 2. Load the battleground scene.  
         //SceneManager.LoadScene("BattleGround");
     }
     public void battle()
     {
-        if ((PlayerPrefs.HasKey("BattleCarVar"))&& (PlayerPrefs.HasKey("BattleCarVar1")))
+        if ((PlayerPrefs.HasKey("BattleCarVar"))&& (PlayerPrefs.HasKey("BattleCarVar2")))
         {
             SceneManager.LoadScene("Battle");
         }
+        Debug.Log("It was clicked");
 
 
     }

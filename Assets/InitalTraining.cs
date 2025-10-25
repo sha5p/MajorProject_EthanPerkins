@@ -77,10 +77,8 @@ public class InitalTraining : MonoBehaviour
             {
                 foreach (Transform child in weaponMount)
                 {
-                    if (child.name.Contains("blaster"))
-                    {
+
                         child.gameObject.AddComponent<ShootingScript>();
-                    }
                 }
             }
 

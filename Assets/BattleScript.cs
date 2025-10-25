@@ -27,6 +27,10 @@ public class BattleScript : MonoBehaviour
             Destroy(collision.gameObject);
         }
     }
+
+    private GameObject instantiatedCar1;
+    private GameObject instantiatedCar2;
+    
     void Awake()
     {
         string carName1 = PlayerPrefs.GetString("BattleCarVar", "");
@@ -68,13 +72,46 @@ public class BattleScript : MonoBehaviour
 
             // Apply the ML-Agents/Battle components setup (identical to your original logic)
             ConfigureInstantiatedCar(instantiatedCar);
+            if (spawnPoint == carSpawnPoint1)
+            {
+                instantiatedCar1 = instantiatedCar;
+            }
+            else if (spawnPoint == carSpawnPoint2)
+            {
+                instantiatedCar2 = instantiatedCar;
+            }
+
+            if (instantiatedCar1 != null && instantiatedCar2 != null)
+            {
+                AssignTargets();
+            }
         }
         else
         {
             Debug.LogError($"Failed to load car prefab ({carName}) from Addressables. Error: {handle.OperationException}");
         }
     }
+    private void AssignTargets()
+    {
+        // Get the BattleAI components from the two instantiated cars
+        BattleAI ai1 = instantiatedCar1.GetComponent<BattleAI>();
+        BattleAI ai2 = instantiatedCar2.GetComponent<BattleAI>();
 
+        if (ai1 != null && ai2 != null)
+        {
+            // Car 1's AI targets Car 2
+            ai1.target = instantiatedCar2.transform;
+            Debug.Log($"Car 1 ({instantiatedCar1.name}) target set to Car 2 ({instantiatedCar2.name}).");
+
+            // Car 2's AI targets Car 1
+            ai2.target = instantiatedCar1.transform;
+            Debug.Log($"Car 2 ({instantiatedCar2.name}) target set to Car 1 ({instantiatedCar1.name}).");
+        }
+        else
+        {
+            Debug.LogError("Missing BattleAI component on one or both instantiated cars. Target assignment failed.");
+        }
+    }
 
     private GameObject InstantiateCar(GameObject prefab, Transform spawnPoint)
     {
@@ -125,11 +162,8 @@ public class BattleScript : MonoBehaviour
         {
             foreach (Transform child in weaponMount)
             {
-                if (child.name.Contains("blaster"))
-                {
                     child.gameObject.AddComponent<ShootingScript>();
                     Debug.Log($"Added ShootingScript to {child.name} on {car.name}.");
-                }
             }
         }
     }

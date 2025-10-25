@@ -42,10 +42,18 @@ public class PlayerSettings : MonoBehaviour
     }
     public void UpdateDisSpeed(float newSliderValue)
     {
-        GameObject targetGameObject = GameObject.Find("blaster-a");
-        Speed = 1f + (newSliderValue * 9f);
-        Debug.Log("Speed " + targetGameObject);
+        GameObject weaponMountParent = GameObject.Find("WeaponMount");
+
+        // Get the Transform of the FIRST CHILD (index 0)
+        Transform childTransform = weaponMountParent.transform.GetChild(0);
+        GameObject targetGameObject = childTransform.gameObject;
+
+        float Speed = 1f + (newSliderValue * 9f);
+
+        Debug.Log("Speed " + Speed + " | Target: " + targetGameObject.name);
+
         ShootingScript shootingsScript = targetGameObject.GetComponent<ShootingScript>();
+
         shootingsScript.currentRepeatRate = Speed;
         shootingsScript.UpdateFireRate(shootingsScript.currentRepeatRate);
     }

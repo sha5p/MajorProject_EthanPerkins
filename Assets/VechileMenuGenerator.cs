@@ -28,7 +28,22 @@ public class VehicleMenuGenerator : MonoBehaviour
     private Transform previewRoot;
     private int prefabIndex = 0;
     private float nextY = 0f;
-
+    public void OnDisable()
+    {
+        if (previewRoot != null)
+        {
+            previewRoot.gameObject.SetActive(false);
+        }
+    }
+    public void ShowPreviews()
+    {
+        if (previewRoot != null)
+        {
+            // Shows the root object, making all child cars and cameras visible again.
+            previewRoot.gameObject.SetActive(true);
+            Debug.Log("VehicleMenuGenerator: Showing all preview cars and cameras.");
+        }
+    }
     void Start()
     {
         if (uiParent == null)
@@ -106,6 +121,7 @@ public class VehicleMenuGenerator : MonoBehaviour
 
             GameObject camObj = new GameObject(prefab.name + "_PreviewCam");
             Camera cam = camObj.AddComponent<Camera>();
+            camObj.transform.SetParent(previewRoot); //
             cam.targetTexture = rtTexture;
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = backgroundColor;
@@ -148,4 +164,5 @@ public class VehicleMenuGenerator : MonoBehaviour
         // 2. Load the battleground scene.
         SceneManager.LoadScene("BattleGround");
     }
+
 }
