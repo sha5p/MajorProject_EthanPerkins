@@ -94,6 +94,15 @@ public class BattleGenerator : MonoBehaviour
 
             Bounds bounds = CalculateBounds(instance);
 
+
+
+            Rigidbody rb = instance.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                // Setting isKinematic to true stops it from reacting to gravity 
+                // and other physics forces, keeping it perfectly still for the preview.
+                rb.isKinematic = true;
+            }
             RenderTexture rtTexture = new RenderTexture(renderTextureSize, renderTextureSize, 16);
             rtTexture.name = prefab.name + "_RT";
             renderImg.texture = rtTexture;
@@ -156,6 +165,15 @@ public class BattleGenerator : MonoBehaviour
 
         // 2. Load the battleground scene.  
         //SceneManager.LoadScene("BattleGround");
+    }
+    public void battle()
+    {
+        if ((PlayerPrefs.HasKey("BattleCarVar"))&& (PlayerPrefs.HasKey("BattleCarVar1")))
+        {
+            SceneManager.LoadScene("Battle");
+        }
+
+
     }
     public void cancel()
     {

@@ -252,6 +252,7 @@ public class Battle_Deisgn : MonoBehaviour
                             Car = instantiatedPrefab;
                             CarVechical = false;
                             instantiatedPrefab.AddComponent<Rotate>();
+
                         }
 
                     }

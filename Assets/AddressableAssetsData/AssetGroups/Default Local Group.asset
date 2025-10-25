@@ -141,6 +141,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3caea18f86b65e469fed3e41f972898
+    m_Address: 1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vehicles
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e57d6fe4e04789b49bc4d71204c66042
     m_Address: Assets/Design_Options/Wheels/wheel-large.fbx
     m_ReadOnly: 0

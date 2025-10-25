@@ -93,7 +93,13 @@ public class VehicleMenuGenerator : MonoBehaviour
             instance.name = prefab.name;
 
             Bounds bounds = CalculateBounds(instance);
-
+            Rigidbody rb = instance.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                // Setting isKinematic to true stops it from reacting to gravity 
+                // and other physics forces, keeping it perfectly still for the preview.
+                rb.isKinematic = true;
+            }
             RenderTexture rtTexture = new RenderTexture(renderTextureSize, renderTextureSize, 16);
             rtTexture.name = prefab.name + "_RT";
             renderImg.texture = rtTexture;
