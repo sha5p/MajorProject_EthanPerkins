@@ -303,7 +303,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -312,7 +312,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.4374999, y: 0.59375, z: 0.6249999}
+  m_Size: {x: 0.4375, y: 0.59375, z: 0.625}
   m_Center: {x: 0, y: 0.296875, z: 0.000000044703476}
 --- !u!1 &2321449195673981069
 GameObject:

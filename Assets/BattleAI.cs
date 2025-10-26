@@ -22,7 +22,31 @@ public class BattleAI : Agent
     private Rigidbody rb;
     private const float maxEnvDistance = 10f;
     private Vector3 previousMove;
+    public HealthBar healthBar;
 
+    public float TotalHealth = 100f;
+    private void OnCollisionEnter(Collision collision)
+    {
+        // 1. Check if the colliding object is a bullet.
+        //    (Assumes your bullet GameObject is T A G G E D as "Bullet")
+        if (collision.gameObject.CompareTag("Bullet"))
+        {
+            Bullet bullet = collision.gameObject.GetComponent<Bullet>();
+            float damageAmount = 10f; // Set a fixed damage value for simplicity
+            if (bullet != null && bullet.owner == gameObject)
+            {
+                // Friendly fire detected.
+                Debug.Log($"{gameObject.name} hit by own bullet. Ignoring damage. This is the other script comparer name"+bullet.owner);
+                return;
+            }
+            else
+            {
+                TotalHealth -= damageAmount;
+                healthBar.SetHeaHealth(TotalHealth);
+            }
+
+        }
+    }
     public override void Initialize()
     {
         rb = GetComponent<Rigidbody>();

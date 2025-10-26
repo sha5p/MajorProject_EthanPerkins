@@ -2,6 +2,7 @@ using Unity.MLAgents;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using static UnityEngine.GraphicsBuffer;
 
 public class BattleScript : MonoBehaviour
 {
@@ -10,23 +11,11 @@ public class BattleScript : MonoBehaviour
 
     [Tooltip("The spawn point for the second selected car (BattleCarVar2).")]
     public Transform carSpawnPoint2;
-    private float totalDamageTaken = 0f;
-    private void OnCollisionEnter(Collision collision)
-    {
-        // 1. Check if the colliding object is a bullet.
-        //    (Assumes your bullet GameObject is T A G G E D as "Bullet")
-        if (collision.gameObject.CompareTag("Bullet"))
-        {
-            float damageAmount = 10f; // Set a fixed damage value for simplicity
 
-            // 2. Apply the damage and log the result
-            totalDamageTaken += damageAmount;
-            Debug.Log($"{gameObject.name} hit by a bullet! Damage taken: {damageAmount}. Total damage: {totalDamageTaken}");
+    [Header("HealthBar References")]
+    public HealthBar healthBar1; 
+    public HealthBar healthBar2;
 
-            // 3. Destroy the bullet after impact
-            Destroy(collision.gameObject);
-        }
-    }
 
     private GameObject instantiatedCar1;
     private GameObject instantiatedCar2;
@@ -69,9 +58,19 @@ public class BattleScript : MonoBehaviour
 
             // Instantiate the car at the correct spawn point
             GameObject instantiatedCar = InstantiateCar(loadedCarPrefab, spawnPoint);
+            HealthBar assignedHealthBar = null;
 
-            // Apply the ML-Agents/Battle components setup (identical to your original logic)
-            ConfigureInstantiatedCar(instantiatedCar);
+            if (spawnPoint == carSpawnPoint1)
+            {
+                instantiatedCar1 = instantiatedCar;
+                assignedHealthBar = healthBar1; // Get the reference for Car 1
+            }
+            else if (spawnPoint == carSpawnPoint2)
+            {
+                instantiatedCar2 = instantiatedCar;
+                assignedHealthBar = healthBar2; // Get the reference for Car 2
+            }
+            ConfigureInstantiatedCar(instantiatedCar, assignedHealthBar);
             if (spawnPoint == carSpawnPoint1)
             {
                 instantiatedCar1 = instantiatedCar;
@@ -106,13 +105,31 @@ public class BattleScript : MonoBehaviour
             // Car 2's AI targets Car 1
             ai2.target = instantiatedCar1.transform;
             Debug.Log($"Car 2 ({instantiatedCar2.name}) target set to Car 1 ({instantiatedCar1.name}).");
+            SetShooterTarget(instantiatedCar1, instantiatedCar2.transform);
+            SetShooterTarget(instantiatedCar2, instantiatedCar1.transform);
         }
         else
         {
             Debug.LogError("Missing BattleAI component on one or both instantiated cars. Target assignment failed.");
         }
     }
-
+    private void SetShooterTarget(GameObject car, Transform target)
+    {
+        Transform weaponMount = car.transform.Find("WeaponMount");
+        if (weaponMount != null)
+        {
+            foreach (Transform child in weaponMount)
+            {
+                ShootingScript shooter = child.GetComponent<ShootingScript>();
+                if (shooter != null)
+                {
+                    // Set the currentTarget for the weapon
+                    shooter.currentTarget = target;
+                    Debug.Log($"Shooter on {car.name} target set to {target.name}.");
+                }
+            }
+        }
+    }
     private GameObject InstantiateCar(GameObject prefab, Transform spawnPoint)
     {
         GameObject instantiatedCar;
@@ -137,7 +154,7 @@ public class BattleScript : MonoBehaviour
     }
 
 
-    private void ConfigureInstantiatedCar(GameObject car)
+    private void ConfigureInstantiatedCar(GameObject car, HealthBar healthBarRef)
     {
         // 1. Destroy the existing generic Agent component (if it exists)
         Agent existingAgent = car.GetComponent<Agent>();
@@ -147,8 +164,17 @@ public class BattleScript : MonoBehaviour
             Debug.Log($"Removed generic Agent from {car.name}.");
         }
 
-        car.AddComponent<BattleAI>();
+        BattleAI aiComponent = car.AddComponent<BattleAI>();
 
+        if (healthBarRef != null)
+        {
+            aiComponent.healthBar = healthBarRef;
+            Debug.Log($"Assigned HealthBar to BattleAI on {car.name}.");
+        }
+        else
+        {
+            Debug.LogWarning($"HealthBar reference is missing for {car.name}. Please assign it in the Inspector.");
+        }
         Rotate rotateScript = car.GetComponent<Rotate>();
         if (rotateScript != null)
         {
@@ -156,7 +182,6 @@ public class BattleScript : MonoBehaviour
             Debug.Log($"Rotate script disabled on {car.name}.");
         }
 
-        // 4. Find weapon mounts and add ShootingScript to blasters
         Transform weaponMount = car.transform.Find("WeaponMount");
         if (weaponMount != null)
         {

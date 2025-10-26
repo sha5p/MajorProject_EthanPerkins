@@ -2,15 +2,13 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public GameObject owner;
+
     void Start()
     {
-        Destroy(gameObject, 3f);
-    }
+        // Get components in Start (or Awake) for efficiency
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // Original logic: destroy after 2 seconds
+        Destroy(gameObject, 1.5f);
     }
 }

@@ -2,7 +2,9 @@ using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.SceneManagement;
 using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class ShootingScript : MonoBehaviour
 {
@@ -53,9 +55,14 @@ public class ShootingScript : MonoBehaviour
     }
     void Start()
     {
-        AssignTarget();
+        string currentSceneName = SceneManager.GetActiveScene().name;
 
-        Debug.Log(currentTarget+"Thisdowaidoaw");
+        if (currentSceneName == "BattleGround")
+        {
+            AssignTarget();
+        }
+            
+
         if (!string.IsNullOrEmpty(bulletPrefabAddress))
         {
             opHandle = Addressables.LoadAssetAsync<GameObject>(bulletPrefabAddress);
@@ -116,9 +123,12 @@ public class ShootingScript : MonoBehaviour
     {
        nextFireTime = Time.time + fireRate;
 
-       Debug.Log("Shooting");
        GameObject bullet = Instantiate(loadedBulletPrefab, transform.position, transform.rotation);
+       GameObject ownerCar = transform.parent.parent.gameObject;
 
+       Bullet Bullet = bullet.AddComponent<Bullet>();
+       Bullet.owner = ownerCar;
+       Debug.Log(ownerCar);
        Rigidbody rb = bullet.GetComponent<Rigidbody>();
        if (rb != null)
         {
