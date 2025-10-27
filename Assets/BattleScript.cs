@@ -19,30 +19,53 @@ public class BattleScript : MonoBehaviour
 
     private GameObject instantiatedCar1;
     private GameObject instantiatedCar2;
-    
-    void Awake()
+
+    private AsyncOperationHandle<GameObject> carHandle1;
+    private AsyncOperationHandle<GameObject> carHandle2;
+
+    public void Awake()
     {
+        // Retrieve the car names early
         string carName1 = PlayerPrefs.GetString("BattleCarVar", "");
         string carName2 = PlayerPrefs.GetString("BattleCarVar2", "");
 
-        if (string.IsNullOrEmpty(carName1) || string.IsNullOrEmpty(carName2))
+        if (!string.IsNullOrEmpty(carName1))
         {
-            if (string.IsNullOrEmpty(carName1)) Debug.LogError("Missing car for Player 1 (BattleCarVar).");
-            if (string.IsNullOrEmpty(carName2)) Debug.LogError("Missing car for Player 2 (BattleCarVar2).");
-            return;
+            // 1. START LOADING the assets as soon as the script awakens!
+            // Do NOT use .Completed += here, just start the load operation.
+            carHandle1 = Addressables.LoadAssetAsync<GameObject>(carName1);
+        }
+        if (!string.IsNullOrEmpty(carName2))
+        {
+            carHandle2 = Addressables.LoadAssetAsync<GameObject>(carName2);
+        }
+    }
+
+    public void BattleBegin()
+    {
+        // The assets are already loaded (or nearly loaded) by the time this runs.
+
+        // Check for success/completion of the handles and immediately process them.
+        // The load operation has been running in the background since Awake().
+
+        if (carHandle1.IsValid() && carHandle1.IsDone)
+        {
+            OnCarPrefabLoaded(carHandle1, carSpawnPoint1, PlayerPrefs.GetString("BattleCarVar", ""));
+        }
+        else
+        {
+            // Handle error or wait if somehow not done (unlikely if called after a countdown)
+            Debug.LogError("Car 1 asset was not ready!");
         }
 
-        Debug.Log($"Car 1: {carName1}. Car 2: {carName2}. Starting asynchronous asset loading.");
-
-        Addressables.LoadAssetAsync<GameObject>(carName1).Completed += (handle) =>
+        if (carHandle2.IsValid() && carHandle2.IsDone)
         {
-            OnCarPrefabLoaded(handle, carSpawnPoint1, carName1);
-        };
-
-        Addressables.LoadAssetAsync<GameObject>(carName2).Completed += (handle) =>
+            OnCarPrefabLoaded(carHandle2, carSpawnPoint2, PlayerPrefs.GetString("BattleCarVar2", ""));
+        }
+        else
         {
-            OnCarPrefabLoaded(handle, carSpawnPoint2, carName2);
-        };
+            Debug.LogError("Car 2 asset was not ready!");
+        }
     }
     private void OnCarPrefabLoaded(AsyncOperationHandle<GameObject> handle, Transform spawnPoint, string carName)
     {
