@@ -1776,6 +1776,11 @@ MonoBehaviour:
   countdownDisplay: {fileID: 1688711664}
   countdownObject: {fileID: 1688711662}
   battlescript: {fileID: 639758177}
+  scoreMarkers:
+  - {fileID: 1411997780}
+  - {fileID: 657316084}
+  - {fileID: 1063931436}
+  emptyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &1802986301
 GameObject:
   m_ObjectHideFlags: 0
@@ -2335,10 +2340,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBarSlider: {fileID: 2463594944884038095}
   fillImage: {fileID: 7229367181665989626}
+  Countdown: {fileID: 1688711666}
   scoreMarkers:
   - {fileID: 1411997780}
   - {fileID: 657316084}
   - {fileID: 1063931436}
+  countdownGameobject: {fileID: 1688711662}
+  healthBar: {fileID: 7355442475981553275}
 --- !u!224 &3860955676102332774
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2621,10 +2629,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBarSlider: {fileID: 7264499384624265204}
   fillImage: {fileID: 2500344525285825985}
+  Countdown: {fileID: 1688711666}
   scoreMarkers:
   - {fileID: 1411997780}
   - {fileID: 657316084}
   - {fileID: 1063931436}
+  countdownGameobject: {fileID: 1688711662}
+  healthBar: {fileID: 2874840064767013831}
 --- !u!222 &7405969178070060446
 CanvasRenderer:
   m_ObjectHideFlags: 0

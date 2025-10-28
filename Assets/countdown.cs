@@ -2,7 +2,7 @@ using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class countdown : MonoBehaviour
 {
@@ -11,6 +11,8 @@ public class countdown : MonoBehaviour
     public GameObject countdownObject;
 
     public BattleScript battlescript;
+
+    private int currentRound = 1;
     public void Start()
     {
         StartCoroutine(CountdownToStart());
@@ -33,27 +35,36 @@ public class countdown : MonoBehaviour
         
 
     }
+    public void roundEnd()
+    {
+        StartCoroutine(RoundTransitionRoutine());
+    }
     IEnumerator RoundTransitionRoutine()
     {
-        int currentRound = GetCurrentRoundNumber(1);
-
-        countdownObject.SetActive(true);
         countdownDisplay.text = $"Round {currentRound} Over";
         yield return new WaitForSeconds(2.0f); // Wait 2 seconds
 
-        //battlescript.ResetBattleState(); 
 
-        int nextRound = currentRound + 1;
-        countdownDisplay.text = $"Round {nextRound}";
+        countdownDisplay.text = $"Round {currentRound+1}";
         yield return new WaitForSeconds(1.0f); // Wait 1 second
 
-        // 4. Start the next countdown sequence (3, 2, 1, Fight!)
-        countdownObject.SetActive(false); // Hide the Round text
-        countDownTime = 3; // Reset the countdown timer
         StartCoroutine(CountdownToStart());
     }
-    int GetCurrentRoundNumber(int z)
+    public Image[] scoreMarkers;
+    public Color emptyColor = Color.grey;
+    public int GetCurrentRoundNumber()
     {
-        return 1;
+        int filledMarkers = 0;
+
+        foreach (Image marker in scoreMarkers)
+        {
+            if (marker.color == emptyColor)
+            {
+                filledMarkers++;
+            }
+        }
+
+        return filledMarkers + 1;
     }
+
 }
