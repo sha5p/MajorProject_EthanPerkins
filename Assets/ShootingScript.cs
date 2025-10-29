@@ -13,9 +13,9 @@ public class ShootingScript : MonoBehaviour
     private bool isPrefabLoaded = false;
     private AsyncOperationHandle<GameObject> opHandle;
     public float rotationSpeed = 5f; // Control how fast the turret turns
-    public float fireRate = 1.0f; // Fire a bullet every 1 second
+    public float fireRate = 3.0f; // Fire a bullet every 1 second
     private float nextFireTime = 0f;
-    public float currentRepeatRate = 1f;
+    public float currentRepeatRate =3f;
     public Transform currentTarget;
     void AssignTarget()
     {

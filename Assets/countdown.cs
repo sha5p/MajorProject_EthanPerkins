@@ -41,14 +41,22 @@ public class countdown : MonoBehaviour
     }
     IEnumerator RoundTransitionRoutine()
     {
-        countdownDisplay.text = $"Round {currentRound} Over";
-        yield return new WaitForSeconds(2.0f); // Wait 2 seconds
+        if (currentRound != 4)
+        {
+            countdownDisplay.text = $"Round {currentRound} Over";
+            yield return new WaitForSeconds(2.0f); // Wait 2 seconds
 
 
-        countdownDisplay.text = $"Round {currentRound+1}";
-        yield return new WaitForSeconds(1.0f); // Wait 1 second
+            countdownDisplay.text = $"Round {currentRound+1}";
+            yield return new WaitForSeconds(1.0f); // Wait 1 second
 
-        StartCoroutine(CountdownToStart());
+            StartCoroutine(CountdownToStart());
+        }
+        if (currentRound == 4)
+        {
+
+        }
+
     }
     public Image[] scoreMarkers;
     public Color emptyColor = Color.grey;

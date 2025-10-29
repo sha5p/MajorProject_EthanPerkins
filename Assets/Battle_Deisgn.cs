@@ -7,9 +7,11 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
-
+using Random = UnityEngine.Random;
 public class Battle_Deisgn : MonoBehaviour
 {
+    
+
     [Header("Buttons Options")]
     public List<Button> ForwardButton = new List<Button>();
     public List<Button> BackWardsButton = new List<Button>();
@@ -82,8 +84,10 @@ public class Battle_Deisgn : MonoBehaviour
 
         if (newPrefab != null)
         {
-            Debug.Log($"Successfully saved {newCarName} as a prefab at: {prefabPath}");
+            Debug.Log($"Successfully saved {newCarName} as a prefab at: {prefabPath}"); 
             MakePrefabAddressable(prefabPath, newCarName);
+
+            SaveIndividualPlayerState(newCarName);
         }
         else
         {
@@ -399,6 +403,37 @@ public class Battle_Deisgn : MonoBehaviour
 
         settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, entry, true);
         AssetDatabase.SaveAssets();
+    }
+    //The below code is for saving states yk
+
+    private string GetStateFilename(string carNumber)
+    {
+        // Generates a filename like "PlayerState1.json"
+        return "PlayerState" + carNumber + ".json";
+    }
+
+    public void SaveIndividualPlayerState(string carNumber)
+    {
+        // The CarName will be based on the car number/index
+        string carName = "Car_" + carNumber;
+
+        // --- Get Real Stats Here ---
+
+        float damage = 10;
+        float distance = 5;
+        float firingRate = 3;
+        // ---------------------------
+
+        // 1. Create the new state object
+        PlayerState newState = new PlayerState(carName, damage, distance, firingRate);
+
+        // 2. Determine the unique filename
+        string filename = GetStateFilename(carNumber);
+
+        // 3. Save the single state object to the unique file
+        FileHandler.SaveToJSON<PlayerState>(newState, filename);
+
+        Debug.Log($"Successfully saved state for {carName} to file: {filename}");
     }
 
 }
