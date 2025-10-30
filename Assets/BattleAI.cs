@@ -67,6 +67,36 @@ public class BattleAI : Agent
             return 0f; // Return 0 or another default/error value
         }
     }
+    private float GetShooterDamage(GameObject shooterCar)
+    {
+        float defaultDamage = 10f; // A safe default value
+
+        if (shooterCar == null)
+        {
+            Debug.LogError("Shooter object is null. Cannot load state data.");
+            return defaultDamage;
+        }
+
+        // 1. Get and clean the shooting car's name (removing "(Clone)")
+        string shooterCarName = shooterCar.name.Replace("(Clone)", "").Trim();
+
+        string filename = GetStateFilename(shooterCarName);
+
+        // 3. Load the state
+        PlayerState loadedState = FileHandler.ReadFromJSON<PlayerState>(filename);
+
+        if (loadedState != null)
+        {
+            // 4. Return the loaded damage
+            Debug.Log($"Loaded Damage ({loadedState.Damage}) for shooter: {shooterCarName}");
+            return loadedState.Damage;
+        }
+        else
+        {
+            Debug.LogWarning($"State file not found for shooter: {shooterCarName}. Using default damage: {defaultDamage}");
+            return defaultDamage;
+        }
+    }
     private void OnCollisionEnter(Collision collision)
     {
         // 1. Check if the colliding object is a bullet.
@@ -74,7 +104,6 @@ public class BattleAI : Agent
         if (collision.gameObject.CompareTag("Bullet"))
         {
             Bullet bullet = collision.gameObject.GetComponent<Bullet>();
-            float damageAmount = 10f; // Set a fixed damage value for simplicity
             if (bullet != null && bullet.owner == gameObject)
             {
                 // Friendly fire detected.
@@ -83,6 +112,7 @@ public class BattleAI : Agent
             }
             else
             {
+                float damageAmount = GetShooterDamage(bullet.owner);
                 TotalHealth -= damageAmount;
                 healthBar.SetHeaHealth(TotalHealth);
             }
