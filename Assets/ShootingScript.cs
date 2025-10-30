@@ -179,8 +179,14 @@ public class ShootingScript : MonoBehaviour
 
         PlayerState loadedState = FileHandler.ReadFromJSON<PlayerState>(filename);
 
-        // 2. MODIFY only the FiringRate field
         loadedState.FiringRate = currentRepeatRate;
+
+        // 3. WRITE the entire, updated state back to the file
+        FileHandler.SaveToJSON(loadedState, filename);
+
+        float newDamage = currentRepeatRate * 10f;
+        loadedState.FiringRate = currentRepeatRate;
+        loadedState.Damage = newDamage; // <-- Saving the calculated damage
 
         // 3. WRITE the entire, updated state back to the file
         FileHandler.SaveToJSON(loadedState, filename);
