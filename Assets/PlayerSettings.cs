@@ -32,6 +32,7 @@ public class PlayerSettings : MonoBehaviour
         if (battleAI != null)
         {
             battleAI.SetDistance(Distance);
+            battleAI.SaveCurrentDistance(); 
         }
         else
         {
@@ -55,6 +56,7 @@ public class PlayerSettings : MonoBehaviour
         ShootingScript shootingsScript = targetGameObject.GetComponent<ShootingScript>();
 
         shootingsScript.currentRepeatRate = Speed;
+        shootingsScript.SaveCurrentRepeatRate();
         shootingsScript.UpdateFireRate(shootingsScript.currentRepeatRate);
     }
 }

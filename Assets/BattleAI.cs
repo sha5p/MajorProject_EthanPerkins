@@ -1,7 +1,8 @@
-using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public class BattleAI : Agent
 {
@@ -25,6 +26,47 @@ public class BattleAI : Agent
     public HealthBar healthBar;
 
     public float TotalHealth = 100f;
+    public void SaveCurrentDistance()
+    {
+        // 1. Determine file and car ID
+        string objectName = this.gameObject.name;
+        string baseName = objectName.Replace("(Clone)", "").Trim();
+        string carNumber = baseName;
+        string filename = GetStateFilename(carNumber);
+
+        PlayerState loadedState = FileHandler.ReadFromJSON<PlayerState>(filename);
+
+        loadedState.Distance = baseDistance;
+
+        FileHandler.SaveToJSON(loadedState, filename);
+
+        Debug.Log($"Saved new distance for Car {carNumber}: {baseDistance} to {filename}");
+    }
+    private string GetStateFilename(string carNumber)
+    {
+        return "PlayerState" + carNumber + ".json";
+    }
+    public float GetCarDistance(GameObject carObject)
+    {
+        string objectName = carObject.name;
+        string baseName = objectName.Replace("(Clone)", "").Trim(); // Trim removes any extra spaces
+        string carNumber = baseName;
+        Debug.Log(carNumber+"This is the car number");
+        string filename = GetStateFilename(carNumber);
+        PlayerState loadedState = FileHandler.ReadFromJSON<PlayerState>(filename);
+
+        if (loadedState != null)
+        {
+            float distance = loadedState.Distance;
+            Debug.Log($"Loaded distance for Car {carNumber}: {distance}");
+            return distance;
+        }
+        else
+        {
+            Debug.LogError($"Could not load data for car number: {carNumber}. Check if the file '{filename}' exists in the persistent data path.");
+            return 0f; // Return 0 or another default/error value
+        }
+    }
     private void OnCollisionEnter(Collision collision)
     {
         // 1. Check if the colliding object is a bullet.
@@ -47,6 +89,7 @@ public class BattleAI : Agent
 
         }
     }
+
     public override void Initialize()
     {
         rb = GetComponent<Rigidbody>();
@@ -77,10 +120,27 @@ public class BattleAI : Agent
     public override void OnEpisodeBegin()
     {
         ResetAgent();
-        
-        //Random.Range(2f, 6f);
-        //minDistance = baseDistance;
-        //maxDistance = baseDistance + 2f;
+        //TotalHealth = 100f; // Reset health (if not done in ResetAgent)
+
+        // 2. Load the saved distance from the JSON file
+
+        // A. Use 'this.gameObject' because the BattleAI script is attached to the car itself
+        float savedDistance = GetCarDistance(this.gameObject);
+
+        // B. Use the loaded value to set the agent's desired distance range
+        if (savedDistance > 0f)
+        {
+            // Use the loaded distance to set the base
+            SetDistance(savedDistance);
+            Debug.Log($"Loaded and applied base distance: {savedDistance}");
+        }
+        else
+        {
+            // Fallback to the default value if the file was not found
+            SetDistance(baseDistance); // baseDistance is currently 4f in your script
+            Debug.Log($"Using default base distance: {baseDistance}");
+        }
+
     }
     public void SetDistance(float distance)
     {
