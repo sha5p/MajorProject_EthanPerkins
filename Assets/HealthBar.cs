@@ -23,10 +23,24 @@ public class HealthBar : MonoBehaviour
     private readonly Color GreenColor = Color.green;
     private readonly Color RedColor = Color.red;
     private readonly Color EmptyColor = Color.white;
-
+    public GameObject self;
     public GameObject countdownGameobject;
     private void PrintBattleResult()
     {
+        bool opponentIsZero = healthBar.healthBarSlider.value == 0;
+        if (opponentIsZero && self.name =="HelathBar1")
+        {
+            // 🚨 TIE SCENARIO: Both players hit 0 simultaneously!
+            Debug.Log("Round Tie! Both players were defeated.");
+
+
+
+            // Notify the countdown script to advance the round
+            countdownGameobject.SetActive(true);
+            Countdown.RoundTie();
+
+            return; 
+        }
         // Get the color set in the SetHealth function (it should be red if health is zero)
         Color finalColor = fillImage.color;
         DestroyAllBattleAIs();
@@ -35,14 +49,24 @@ public class HealthBar : MonoBehaviour
         if (finalColor.Equals(RedColor))
         {
             AwardWin(GreenColor);
-            countdownGameobject.SetActive(true);
-            Countdown.roundEnd();
+            if (checker)
+            {
+                countdownGameobject.SetActive(true);
+                Countdown.roundEnd();
+                checker = false;
+            }
+            
         }
         else if (finalColor.Equals(GreenColor))
         {
             AwardWin(RedColor);
-            countdownGameobject.SetActive(true);
-            Countdown.roundEnd();
+            if (checker)
+            {
+                countdownGameobject.SetActive(true);
+                Countdown.roundEnd();
+                checker = false;
+            }
+               
         }
         else
         {
@@ -66,27 +90,53 @@ public class HealthBar : MonoBehaviour
         }
     }
     public HealthBar healthBar;
+    public bool checker = false;
     public void AwardWin(Color winColor)
     {
-        // 1. Iterate through the score markers for THIS winning car
+        int currentWins = 0;
+        int firstEmptyMarkerIndex = -1;
+
+        // 1. Count existing wins and find the next empty spot
         for (int i = 0; i < scoreMarkers.Length; i++)
         {
             Image marker = scoreMarkers[i];
 
-            if (ColorUtility.ToHtmlStringRGBA(marker.color) == ColorUtility.ToHtmlStringRGBA(EmptyColor))
+            // Check for existing wins of this color
+            if (ColorUtility.ToHtmlStringRGBA(marker.color) == ColorUtility.ToHtmlStringRGBA(winColor))
             {
-
-                marker.color = winColor;
-                healthBarSlider.value = 100;
-                healthBar.healthBarSlider.value = 100;
-
-                Debug.Log($"{gameObject.name} won! Filling Score Marker {i + 1}.");
-
-                return;
+                currentWins++;
+            }
+            // Find the index of the first empty marker
+            else if (ColorUtility.ToHtmlStringRGBA(marker.color) == ColorUtility.ToHtmlStringRGBA(EmptyColor) && firstEmptyMarkerIndex == -1)
+            {
+                firstEmptyMarkerIndex = i;
             }
         }
 
+        if (firstEmptyMarkerIndex != -1)
+        {
+            Image marker = scoreMarkers[firstEmptyMarkerIndex];
+            marker.color = winColor;
+            currentWins++; 
+            healthBarSlider.value = 100;
+            healthBar.healthBarSlider.value = 100;
 
+            Debug.Log($"{gameObject.name} won! Filling Score Marker {firstEmptyMarkerIndex + 1}. Total wins: {currentWins}");
+
+            // 3. Check for Game Over after the point is awarded
+            if (currentWins >= 2)
+            {
+                Debug.Log($"*** MATCH WINNER ({winColor})! Game Over. ***");
+                countdownGameobject.SetActive(true);
+                Countdown.gameover(); // Game Over
+            }
+            else
+            {
+                checker = true;
+                countdownGameobject.SetActive(true);
+                Countdown.roundEnd(); // Advance to next round
+            }
+        }
     }
 
 

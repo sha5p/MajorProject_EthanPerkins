@@ -13,8 +13,10 @@ public class countdown : MonoBehaviour
     public BattleScript battlescript;
 
     private int currentRound = 1;
+    public int initialCountDownTime = 3;
     public void Start()
     {
+        countDownTime = initialCountDownTime; 
         StartCoroutine(CountdownToStart());
     }
     IEnumerator CountdownToStart()
@@ -43,19 +45,24 @@ public class countdown : MonoBehaviour
     {
         if (currentRound != 4)
         {
+
             countdownDisplay.text = $"Round {currentRound} Over";
             yield return new WaitForSeconds(2.0f); // Wait 2 seconds
+            currentRound++;
 
-
-            countdownDisplay.text = $"Round {currentRound+1}";
+            countdownDisplay.text = $"Round {currentRound}";
             yield return new WaitForSeconds(1.0f); // Wait 1 second
-
+            countDownTime = initialCountDownTime;
             StartCoroutine(CountdownToStart());
         }
         if (currentRound == 4)
         {
-
+            gameover();
         }
+
+    }
+    public void gameover()
+    {
 
     }
     public Image[] scoreMarkers;
@@ -74,5 +81,22 @@ public class countdown : MonoBehaviour
 
         return filledMarkers + 1;
     }
+    public void RoundTie()
+    {
+        StartCoroutine(RoundTieRoutine());
+    }
 
+    IEnumerator RoundTieRoutine()
+    {
+        countdownObject.SetActive(true);
+
+        // Announce the Tie
+        countdownDisplay.text = "TIE! Re-Fight!";
+        yield return new WaitForSeconds(2.0f);
+
+        countDownTime = initialCountDownTime;
+
+        // Start the countdown for the CURRENT round again
+        StartCoroutine(CountdownToStart());
+    }
 }
