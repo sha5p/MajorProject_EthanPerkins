@@ -15,7 +15,7 @@ public class HealthBar : MonoBehaviour
     public void SetHeaHealth(float health)
     {
         healthBarSlider.value = health;
-        if(healthBarSlider.value == 0)
+        if (healthBarSlider.value == 0)
         {
             PrintBattleResult();
         }
@@ -28,7 +28,7 @@ public class HealthBar : MonoBehaviour
     private void PrintBattleResult()
     {
         bool opponentIsZero = healthBar.healthBarSlider.value == 0;
-        if (opponentIsZero && self.name =="HelathBar1")
+        if (opponentIsZero && self.name == "HelathBar1")
         {
             // 🚨 TIE SCENARIO: Both players hit 0 simultaneously!
             Debug.Log("Round Tie! Both players were defeated.");
@@ -39,7 +39,7 @@ public class HealthBar : MonoBehaviour
             countdownGameobject.SetActive(true);
             Countdown.RoundTie();
 
-            return; 
+            return;
         }
         // Get the color set in the SetHealth function (it should be red if health is zero)
         Color finalColor = fillImage.color;
@@ -52,10 +52,9 @@ public class HealthBar : MonoBehaviour
             if (checker)
             {
                 countdownGameobject.SetActive(true);
-                Countdown.roundEnd();
                 checker = false;
             }
-            
+
         }
         else if (finalColor.Equals(GreenColor))
         {
@@ -63,10 +62,9 @@ public class HealthBar : MonoBehaviour
             if (checker)
             {
                 countdownGameobject.SetActive(true);
-                Countdown.roundEnd();
                 checker = false;
             }
-               
+
         }
         else
         {
@@ -117,7 +115,7 @@ public class HealthBar : MonoBehaviour
         {
             Image marker = scoreMarkers[firstEmptyMarkerIndex];
             marker.color = winColor;
-            currentWins++; 
+            currentWins++;
             healthBarSlider.value = 100;
             healthBar.healthBarSlider.value = 100;
 
@@ -128,7 +126,8 @@ public class HealthBar : MonoBehaviour
             {
                 Debug.Log($"*** MATCH WINNER ({winColor})! Game Over. ***");
                 countdownGameobject.SetActive(true);
-                Countdown.gameover(); // Game Over
+                string winner = ConvertWinColorToString(winColor);
+                Countdown.gameover(winner); // Game Over
             }
             else
             {
@@ -139,5 +138,24 @@ public class HealthBar : MonoBehaviour
         }
     }
 
+    public string ConvertWinColorToString(Color winColor)
+    {
+        // Use ColorUtility.ToHtmlStringRGBA for reliable color comparison
+        string winColorHtml = ColorUtility.ToHtmlStringRGBA(winColor);
+        string redHtml = ColorUtility.ToHtmlStringRGBA(Color.red);
+        string greenHtml = ColorUtility.ToHtmlStringRGBA(Color.green);
 
+        if (winColorHtml.Equals(redHtml))
+        {
+            return "Red";
+        }
+        else if (winColorHtml.Equals(greenHtml))
+        {
+            return "Green";
+        }
+        else
+        {
+            return $"Unknown Color ({winColorHtml})";
+        }
+    }
 }

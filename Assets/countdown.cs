@@ -2,6 +2,7 @@ using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class countdown : MonoBehaviour
@@ -47,23 +48,47 @@ public class countdown : MonoBehaviour
         {
 
             countdownDisplay.text = $"Round {currentRound} Over";
+            Debug.Log("This is the round number"+ currentRound);
             yield return new WaitForSeconds(2.0f); // Wait 2 seconds
-            currentRound++;
+            currentRound= currentRound+1;
 
             countdownDisplay.text = $"Round {currentRound}";
             yield return new WaitForSeconds(1.0f); // Wait 1 second
             countDownTime = initialCountDownTime;
             StartCoroutine(CountdownToStart());
         }
-        if (currentRound == 4)
-        {
-            gameover();
-        }
+        
 
     }
-    public void gameover()
+    public void gameover(string winnerMessage)
     {
+        StartCoroutine(GameOverRoutine(winnerMessage));
+    }
 
+    IEnumerator GameOverRoutine(string winnerMessage)
+    {
+        countdownObject.SetActive(true);
+
+        countdownDisplay.text = winnerMessage + " Wins the Match!";
+        yield return new WaitForSeconds(3.0f); 
+
+        int menuCountdown = 3;
+        while (menuCountdown > 0)
+        {
+            countdownDisplay.text = $"Going back to Main Menu in {menuCountdown}...";
+            yield return new WaitForSeconds(1.0f);
+            menuCountdown--;
+        }
+
+        // 3. Load Main Menu Scene
+        countdownDisplay.text = "Loading Menu...";
+        yield return new WaitForSeconds(0.5f);
+
+        // Ensure you have added the MainMenu scene to your Build Settings!
+        SceneManager.LoadScene("Menu_Main");
+
+        // Deactivate the countdown object if you don't destroy this script
+        countdownObject.SetActive(false);
     }
     public Image[] scoreMarkers;
     public Color emptyColor = Color.grey;
@@ -90,7 +115,6 @@ public class countdown : MonoBehaviour
     {
         countdownObject.SetActive(true);
 
-        // Announce the Tie
         countdownDisplay.text = "TIE! Re-Fight!";
         yield return new WaitForSeconds(2.0f);
 
