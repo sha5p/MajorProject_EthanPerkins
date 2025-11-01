@@ -6,7 +6,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-public class VehicleMenuGenerator : MonoBehaviour
+public class BattleGenerator : MonoBehaviour
 {
     [Header("Setup")]
     public GameObject uiEntryPrefab;
@@ -28,6 +28,7 @@ public class VehicleMenuGenerator : MonoBehaviour
     private Transform previewRoot;
     private int prefabIndex = 0;
     private float nextY = 0f;
+    Audio_Manager audio_manager;
     public void OnDisable()
     {
         if (previewRoot != null)
@@ -39,13 +40,13 @@ public class VehicleMenuGenerator : MonoBehaviour
     {
         if (previewRoot != null)
         {
-            // Shows the root object, making all child cars and cameras visible again.
             previewRoot.gameObject.SetActive(true);
             Debug.Log("VehicleMenuGenerator: Showing all preview cars and cameras.");
         }
     }
     void Start()
     {
+        audio_manager = GameObject.FindGameObjectWithTag("Audio").GetComponent<Audio_Manager>();
         if (uiParent == null)
         {
             Debug.LogError("UI Parent is not assigned! Please assign a RectTransform to the uiParent field in the Inspector.");
@@ -108,6 +109,9 @@ public class VehicleMenuGenerator : MonoBehaviour
             instance.name = prefab.name;
 
             Bounds bounds = CalculateBounds(instance);
+
+
+
             Rigidbody rb = instance.GetComponent<Rigidbody>();
             if (rb != null)
             {
@@ -121,7 +125,7 @@ public class VehicleMenuGenerator : MonoBehaviour
 
             GameObject camObj = new GameObject(prefab.name + "_PreviewCam");
             Camera cam = camObj.AddComponent<Camera>();
-            camObj.transform.SetParent(previewRoot); //
+            camObj.transform.SetParent(previewRoot); 
             cam.targetTexture = rtTexture;
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = backgroundColor;
@@ -139,7 +143,7 @@ public class VehicleMenuGenerator : MonoBehaviour
         if (selectButton != null)
         {
             GameObject carToSelect = prefab;
-            selectButton.onClick.AddListener(() => OnCarSelected(carToSelect));
+            selectButton.onClick.AddListener(() => BattleSelected(carToSelect));
         }
         prefabIndex++;
     }
@@ -155,14 +159,58 @@ public class VehicleMenuGenerator : MonoBehaviour
             bounds.Encapsulate(r.bounds);
         return bounds;
     }
-
-    private void OnCarSelected(GameObject selectedCarPrefab)
+    public BattleText battletext;
+    private void BattleSelected(GameObject selectedCarPrefab)
     {
-        PlayerPrefs.SetString("SelectedCarName", selectedCarPrefab.name);
+        //PlayerPrefs.DeleteKey("BattleCarVar");
+
+        audio_manager.PlaySFX(audio_manager.ClickSound);
+
+        if (!(PlayerPrefs.HasKey("BattleCarVar")))
+        {
+            PlayerPrefs.SetString("BattleCarVar", selectedCarPrefab.name);
+            Debug.Log("Player does not ahve");
+            battletext.ChangeText("1/2");
+        }
+        else
+        {
+            PlayerPrefs.SetString("BattleCarVar2", selectedCarPrefab.name);
+            Debug.Log("Player does  ahve");
+            battletext.ChangeText("2/2");
+        }
         Debug.Log($"Selected car: {selectedCarPrefab.name}. Saved to PlayerPrefs.");
-
-        // 2. Load the battleground scene.
-        SceneManager.LoadScene("BattleGround");
+        PlayerPrefs.Save();
+        // 2. Load the battleground scene.  
+        //SceneManager.LoadScene("BattleGround");
     }
+    public void battle()
+    {
+        audio_manager.PlaySFX(audio_manager.ClickSound);
+        if ((PlayerPrefs.HasKey("BattleCarVar"))&& (PlayerPrefs.HasKey("BattleCarVar2")))
+        {
+            SceneManager.LoadScene("Battle");
+        }
+        Debug.Log("It was clicked");
 
+
+    }
+    public void cancel()
+    {
+        audio_manager.PlaySFX(audio_manager.ClickSound);
+        const string KEY_CAR_1 = "BattleCarVar";
+        const string KEY_CAR_2 = "BattleCarVar2";
+        if (PlayerPrefs.HasKey(KEY_CAR_1))
+        {
+            PlayerPrefs.DeleteKey(KEY_CAR_1);
+        }
+
+        if (PlayerPrefs.HasKey(KEY_CAR_2))
+        {
+            PlayerPrefs.DeleteKey(KEY_CAR_2);
+        }
+        PlayerPrefs.Save();
+        battletext.ChangeText("0/2");
+
+    }
 }
+

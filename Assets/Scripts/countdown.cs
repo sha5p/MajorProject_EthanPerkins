@@ -15,8 +15,11 @@ public class countdown : MonoBehaviour
 
     private int currentRound = 1;
     public int initialCountDownTime = 3;
+
+    Audio_Manager audio_manager;
     public void Start()
     {
+        audio_manager = GameObject.FindGameObjectWithTag("Audio").GetComponent<Audio_Manager>();
         countDownTime = initialCountDownTime; 
         StartCoroutine(CountdownToStart());
     }
@@ -25,14 +28,16 @@ public class countdown : MonoBehaviour
         while(countDownTime > 0)
         {
             countdownDisplay.text=countDownTime.ToString();
+            audio_manager.PlaySFX(audio_manager.beep);
             yield return new WaitForSeconds(1f);
 
             countDownTime--;
         }
         
         countdownDisplay.text = "Fight!";
-
+       
         yield return new WaitForSeconds(0.3f);
+        audio_manager.PlaySFX(audio_manager.bellRing);
         battlescript.BattleBegin();
         countdownObject.SetActive(false);
         
@@ -40,6 +45,7 @@ public class countdown : MonoBehaviour
     }
     public void roundEnd()
     {
+        audio_manager.PlaySFX(audio_manager.bellRing);
         StartCoroutine(RoundTransitionRoutine());
     }
     IEnumerator RoundTransitionRoutine()
@@ -62,6 +68,7 @@ public class countdown : MonoBehaviour
     }
     public void gameover(string winnerMessage)
     {
+        audio_manager.PlaySFX(audio_manager.Victory);
         StartCoroutine(GameOverRoutine(winnerMessage));
     }
 
@@ -76,6 +83,7 @@ public class countdown : MonoBehaviour
         while (menuCountdown > 0)
         {
             countdownDisplay.text = $"Going back to Main Menu in {menuCountdown}...";
+            audio_manager.PlaySFX(audio_manager.beep);
             yield return new WaitForSeconds(1.0f);
             menuCountdown--;
         }

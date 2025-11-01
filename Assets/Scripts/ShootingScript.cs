@@ -16,6 +16,8 @@ public class ShootingScript : MonoBehaviour
     public float fireRate = 3.0f; // Fire a bullet every 1 second
     public float currentRepeatRate =3f;
     public Transform currentTarget;
+    Audio_Manager audio_manager;
+    
     void AssignTarget()
     {
         Transform ownerPlayerTransform = transform.parent?.parent;
@@ -134,6 +136,8 @@ public class ShootingScript : MonoBehaviour
         {
             rb.AddForce(-bullet.transform.forward * 1000f);
         }
+        audio_manager = GameObject.FindGameObjectWithTag("Audio").GetComponent<Audio_Manager>();
+        audio_manager.PlaySFX(audio_manager.shoot);
     }
     private void LoadCurrentRepeatRate()
     {

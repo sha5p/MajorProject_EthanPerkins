@@ -10,8 +10,8 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 public class Battle_Deisgn : MonoBehaviour
 {
-    
 
+    Audio_Manager audio_manager;
     [Header("Buttons Options")]
     public List<Button> ForwardButton = new List<Button>();
     public List<Button> BackWardsButton = new List<Button>();
@@ -41,6 +41,7 @@ public class Battle_Deisgn : MonoBehaviour
     private const string Car_Number = "Car#";
     public void Start()
     {
+        audio_manager = GameObject.FindGameObjectWithTag("Audio").GetComponent<Audio_Manager>();
         if (PlayerPrefs.HasKey(Car_Number))
         {
             PlayerPrefs.SetInt(Car_Number, 0);
@@ -64,6 +65,7 @@ public class Battle_Deisgn : MonoBehaviour
 
     public void SaveObjectAsPrefab(Button clickedButton)
     {
+        audio_manager.PlaySFX(audio_manager.ClickSound);
         if (Car == null)
         {
             Debug.LogError("Object to save is not assigned!");
@@ -108,6 +110,7 @@ public class Battle_Deisgn : MonoBehaviour
 }
     void OnBackWardsButton(Button clickedButton)
     {
+        audio_manager.PlaySFX(audio_manager.ClickSound);
         string parentName = clickedButton.transform.parent.name;
         AssetReference selectedAssetRef = null;
         if (parentName.Contains("Body") && BodyPrefabs.Count > 0)
@@ -147,6 +150,7 @@ public class Battle_Deisgn : MonoBehaviour
     }
     void OnForwardButtonClicked(Button clickedButton)
     {
+        audio_manager.PlaySFX(audio_manager.ClickSound);
         string parentName = clickedButton.transform.parent.name;
         AssetReference selectedAssetRef = null;
         if (parentName.Contains("Body") && BodyPrefabs.Count > 0)

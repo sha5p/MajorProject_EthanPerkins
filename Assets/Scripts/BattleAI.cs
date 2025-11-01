@@ -97,12 +97,15 @@ public class BattleAI : Agent
             return defaultDamage;
         }
     }
+    Audio_Manager audio_manager;
     private void OnCollisionEnter(Collision collision)
     {
         // 1. Check if the colliding object is a bullet.
         //    (Assumes your bullet GameObject is T A G G E D as "Bullet")
         if (collision.gameObject.CompareTag("Bullet"))
         {
+            audio_manager = GameObject.FindGameObjectWithTag("Audio").GetComponent<Audio_Manager>();
+            audio_manager.PlaySFX(audio_manager.expldoe);
             Bullet bullet = collision.gameObject.GetComponent<Bullet>();
             if (bullet != null && bullet.owner == gameObject)
             {

@@ -7,6 +7,7 @@ TagManager:
   - Weapon
   - AI1
   - Bullet
+  - Audio
   layers:
   - Default
   - TransparentFX

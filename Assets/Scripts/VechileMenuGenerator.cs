@@ -6,8 +6,9 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-public class BattleGenerator : MonoBehaviour
+public class VehicleMenuGenerator : MonoBehaviour
 {
+    Audio_Manager audio_manager;
     [Header("Setup")]
     public GameObject uiEntryPrefab;
     public RectTransform uiParent;
@@ -39,12 +40,14 @@ public class BattleGenerator : MonoBehaviour
     {
         if (previewRoot != null)
         {
+            // Shows the root object, making all child cars and cameras visible again.
             previewRoot.gameObject.SetActive(true);
             Debug.Log("VehicleMenuGenerator: Showing all preview cars and cameras.");
         }
     }
     void Start()
     {
+        audio_manager = GameObject.FindGameObjectWithTag("Audio").GetComponent<Audio_Manager>();
         if (uiParent == null)
         {
             Debug.LogError("UI Parent is not assigned! Please assign a RectTransform to the uiParent field in the Inspector.");
@@ -107,9 +110,6 @@ public class BattleGenerator : MonoBehaviour
             instance.name = prefab.name;
 
             Bounds bounds = CalculateBounds(instance);
-
-
-
             Rigidbody rb = instance.GetComponent<Rigidbody>();
             if (rb != null)
             {
@@ -123,7 +123,7 @@ public class BattleGenerator : MonoBehaviour
 
             GameObject camObj = new GameObject(prefab.name + "_PreviewCam");
             Camera cam = camObj.AddComponent<Camera>();
-            camObj.transform.SetParent(previewRoot); 
+            camObj.transform.SetParent(previewRoot); //
             cam.targetTexture = rtTexture;
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = backgroundColor;
@@ -141,7 +141,7 @@ public class BattleGenerator : MonoBehaviour
         if (selectButton != null)
         {
             GameObject carToSelect = prefab;
-            selectButton.onClick.AddListener(() => BattleSelected(carToSelect));
+            selectButton.onClick.AddListener(() => OnCarSelected(carToSelect));
         }
         prefabIndex++;
     }
@@ -157,56 +157,15 @@ public class BattleGenerator : MonoBehaviour
             bounds.Encapsulate(r.bounds);
         return bounds;
     }
-    public BattleText battletext;
-    private void BattleSelected(GameObject selectedCarPrefab)
+
+    private void OnCarSelected(GameObject selectedCarPrefab)
     {
-        //PlayerPrefs.DeleteKey("BattleCarVar");
-
-
-        
-        if (!(PlayerPrefs.HasKey("BattleCarVar")))
-        {
-            PlayerPrefs.SetString("BattleCarVar", selectedCarPrefab.name);
-            Debug.Log("Player does not ahve");
-            battletext.ChangeText("1/2");
-        }
-        else
-        {
-            PlayerPrefs.SetString("BattleCarVar2", selectedCarPrefab.name);
-            Debug.Log("Player does  ahve");
-            battletext.ChangeText("2/2");
-        }
+        audio_manager.PlaySFX(audio_manager.ClickSound);
+        PlayerPrefs.SetString("SelectedCarName", selectedCarPrefab.name);
         Debug.Log($"Selected car: {selectedCarPrefab.name}. Saved to PlayerPrefs.");
-        PlayerPrefs.Save();
-        // 2. Load the battleground scene.  
-        //SceneManager.LoadScene("BattleGround");
+
+        // 2. Load the battleground scene.
+        SceneManager.LoadScene("BattleGround");
     }
-    public void battle()
-    {
-        if ((PlayerPrefs.HasKey("BattleCarVar"))&& (PlayerPrefs.HasKey("BattleCarVar2")))
-        {
-            SceneManager.LoadScene("Battle");
-        }
-        Debug.Log("It was clicked");
 
-
-    }
-    public void cancel()
-    {
-        const string KEY_CAR_1 = "BattleCarVar";
-        const string KEY_CAR_2 = "BattleCarVar2";
-        if (PlayerPrefs.HasKey(KEY_CAR_1))
-        {
-            PlayerPrefs.DeleteKey(KEY_CAR_1);
-        }
-
-        if (PlayerPrefs.HasKey(KEY_CAR_2))
-        {
-            PlayerPrefs.DeleteKey(KEY_CAR_2);
-        }
-        PlayerPrefs.Save();
-        battletext.ChangeText("0/2");
-
-    }
 }
-

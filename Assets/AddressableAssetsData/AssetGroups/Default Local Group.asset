@@ -96,6 +96,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Vehicles
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 96f47508209743d45afec0a9aac4599e
+    m_Address: 1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vehicles
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9d0d65c299539f34a9870e88f4aba208
     m_Address: Assets/Design_Options/Weapons/blaster-b.fbx
     m_ReadOnly: 0
@@ -135,6 +141,12 @@ MonoBehaviour:
     m_Address: Assets/Design_Options/Weapons/MW_10.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: de975f9e4434bd54d9378fe357598248
+    m_Address: 2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vehicles
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e1a9606c39bb3654db8259c6f75b1761
     m_Address: Assets/Design_Options/Weapons/blaster-g.fbx
