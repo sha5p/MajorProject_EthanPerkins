@@ -196,6 +196,7 @@ public class BattleGenerator : MonoBehaviour
     }
     public void cancel()
     {
+        audio_manager = GameObject.FindGameObjectWithTag("Audio").GetComponent<Audio_Manager>();
         audio_manager.PlaySFX(audio_manager.ClickSound);
         const string KEY_CAR_1 = "BattleCarVar";
         const string KEY_CAR_2 = "BattleCarVar2";

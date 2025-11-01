@@ -9380,6 +9380,8 @@ MonoBehaviour:
   shoot: {fileID: 8300000, guid: b29fccf800cc5254c9ba1c341aa2b154, type: 3}
   expldoe: {fileID: 8300000, guid: d89a40c50ceaa6441a8f97f71ba40098, type: 3}
   beep: {fileID: 8300000, guid: 6478fce403c1b7a4fa104798b233df71, type: 3}
+  bellRing: {fileID: 8300000, guid: ea0a97750425f39409516738bcfd1c26, type: 3}
+  Victory: {fileID: 8300000, guid: fc77b10d4b0c1594d813c16165f3e000, type: 3}
   SFX_source: {fileID: 548003726}
   musicSource: {fileID: 146497364}
 --- !u!4 &1879324225
@@ -9626,6 +9628,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1627202794}
         m_TargetAssemblyTypeName: BattleGenerator, Assembly-CSharp
         m_MethodName: ShowPreviews
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1627202794}
+        m_TargetAssemblyTypeName: BattleGenerator, Assembly-CSharp
+        m_MethodName: cancel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

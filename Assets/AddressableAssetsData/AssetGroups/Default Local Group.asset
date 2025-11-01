@@ -65,6 +65,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a82f219697443d438179cf279f93112
+    m_Address: 3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vehicles
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5a7ec49e75d55f64393ce07857f147ba
     m_Address: Assets/Design_Options/Weapons/blaster-c.fbx
     m_ReadOnly: 0

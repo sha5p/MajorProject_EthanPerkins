@@ -71,7 +71,8 @@ public class Battle_Deisgn : MonoBehaviour
             Debug.LogError("Object to save is not assigned!");
             return;
         }
-
+        Rigidbody rb = Car.GetComponent<Rigidbody>();
+        rb.useGravity = true;
         int nextNumber = GetNextPrefabNumber();
         string newCarName = nextNumber.ToString();
 
@@ -95,6 +96,7 @@ public class Battle_Deisgn : MonoBehaviour
         {
             Debug.LogError($"Failed to save {Car.name} as a prefab.");
         }
+        rb.useGravity = false;
     }
     private int GetNextPrefabNumber()
 {
@@ -260,6 +262,8 @@ public class Battle_Deisgn : MonoBehaviour
                             Car = instantiatedPrefab;
                             CarVechical = false;
                             instantiatedPrefab.AddComponent<Rotate>();
+                            Rigidbody rb = instantiatedPrefab.GetComponent<Rigidbody>();
+                            rb.useGravity = false;
 
                         }
 
