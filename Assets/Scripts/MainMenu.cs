@@ -14,6 +14,11 @@ public class MainMenu : MonoBehaviour
     {
         audio_manager = GameObject.FindGameObjectWithTag("Audio").GetComponent<Audio_Manager>();
     }
+    public void OnApplicationQuit()
+    {
+        Application.Quit();
+        EditorApplication.isPlaying = false;
+    }
     public void FadeOutUI()
     {
         audio_manager.PlaySFX(audio_manager.ClickSound);

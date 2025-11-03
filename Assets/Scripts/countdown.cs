@@ -11,6 +11,9 @@ public class countdown : MonoBehaviour
     public TextMeshProUGUI countdownDisplay;
     public GameObject countdownObject;
 
+
+    public Slider healthBarSlider;
+    public Slider healthBarSlider2;
     public BattleScript battlescript;
 
     private int currentRound = 1;
@@ -33,7 +36,8 @@ public class countdown : MonoBehaviour
 
             countDownTime--;
         }
-        
+        healthBarSlider.value = 100;
+        healthBarSlider2.value = 100;
         countdownDisplay.text = "Fight!";
        
         yield return new WaitForSeconds(0.3f);

@@ -3610,6 +3610,8 @@ MonoBehaviour:
   countDownTime: 3
   countdownDisplay: {fileID: 1688711664}
   countdownObject: {fileID: 1688711662}
+  healthBarSlider: {fileID: 2463594944884038095}
+  healthBarSlider2: {fileID: 7264499384624265204}
   battlescript: {fileID: 639758177}
   initialCountDownTime: 3
   scoreMarkers:
